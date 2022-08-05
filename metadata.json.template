@@ -1,0 +1,35 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "Edit Multi Text",
+    "description": "Edit reference value on layer Silkscreen and Fabrication",
+    "description_full": "Edit reference value on layer Silkscreen and Fabrication",
+    "identifier": "vn.onekiwi.edit-multi-text",
+    "type": "plugin",
+    "author": {
+        "name": "OneKiwi",
+        "contact": {
+            "web": "https://github.com/OneKiwiTech"
+        }
+    },
+    "license": "MIT",
+    "resources": {
+        "homepage": "https://github.com/OneKiwiTech/kicad-edit-multi-text"
+    },
+    "versions": [
+        {
+            "version": "VERSION",
+            "status": "stable",
+            "kicad_version": "6.0",
+            "download_sha256": "SHA256",
+            "download_size": DOWNLOAD_SIZE,
+            "download_url": "https://github.com/OneKiwiTech/kicad-edit-multi-text/releases/download/VERSION/edit-multi-text-VERSION.zip",
+            "install_size": INSTALL_SIZE,
+            "platforms": [
+                "linux",
+                "macos",
+                "windows"
+            ]
+
+        }
+    ]
+}
