@@ -9,7 +9,7 @@
 
 import wx
 import wx.xrc
-
+from .combofilter import FilterCombo
 ###########################################################################
 ## Class FanoutDialog
 ###########################################################################
@@ -41,9 +41,10 @@ class FanoutDialog ( wx.Dialog ):
 		fgSizer1.Add( self.textReference, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		choiceReferenceChoices = []
-		self.choiceReference = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceReferenceChoices, 0 )
-		self.choiceReference.SetSelection( 0 )
-		fgSizer1.Add( self.choiceReference, 0, wx.ALL, 5 )
+		#self.choiceReference = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceReferenceChoices, 0 )
+		#self.choiceReference.SetSelection( 0 )
+		self.choiceReference = FilterCombo(sbSizer5.GetStaticBox(), -1, choiceReferenceChoices, style = wx.CB_DROPDOWN|wx.CB_READONLY)
+		fgSizer1.Add( self.choiceReference, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.textTrack = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Track width:", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textTrack.Wrap( -1 )
