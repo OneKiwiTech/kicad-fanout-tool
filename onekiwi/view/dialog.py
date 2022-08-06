@@ -11,123 +11,198 @@ import wx
 import wx.xrc
 
 ###########################################################################
-## Class FootprintTextDialog
+## Class FanoutDialog
 ###########################################################################
 
-class FootprintTextDialog ( wx.Dialog ):
+class FanoutDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Edit Footprint Text", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Fanout Tools", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
 
-		fgSizer = wx.FlexGridSizer( 0, 5, 3, 0 )
-		fgSizer.AddGrowableCol( 1 )
-		fgSizer.AddGrowableCol( 4 )
-		fgSizer.SetFlexibleDirection( wx.BOTH )
-		fgSizer.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+		bSizer4 = wx.BoxSizer( wx.HORIZONTAL )
 
-		self.textAttributes = wx.StaticText( self, wx.ID_ANY, u"Attributes:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.textAttributes.Wrap( -1 )
+		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 
-		fgSizer.Add( self.textAttributes, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+		bSizer8 = wx.BoxSizer( wx.HORIZONTAL )
 
-		choiceAttributesChoices = []
-		self.choiceAttributes = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceAttributesChoices, 0 )
-		self.choiceAttributes.SetSelection( 0 )
-		fgSizer.Add( self.choiceAttributes, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Create fanouts" ), wx.VERTICAL )
 
+		fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
+		fgSizer1.SetFlexibleDirection( wx.BOTH )
+		fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
 
-		fgSizer.Add( ( 0, 0), 0, wx.LEFT|wx.RIGHT, 40 )
+		self.textReference = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Reference:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textReference.Wrap( -1 )
 
-		self.checkJustification = wx.CheckBox( self, wx.ID_ANY, u"Justification:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkJustification, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+		fgSizer1.Add( self.textReference, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		choiceJustificationChoices = []
-		self.choiceJustification = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceJustificationChoices, 0 )
-		self.choiceJustification.SetSelection( 0 )
-		fgSizer.Add( self.choiceJustification, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		choiceReferenceChoices = []
+		self.choiceReference = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceReferenceChoices, 0 )
+		self.choiceReference.SetSelection( 0 )
+		fgSizer1.Add( self.choiceReference, 0, wx.ALL, 5 )
 
-		self.checkLayer = wx.CheckBox( self, wx.ID_ANY, u"toLayer:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkLayer, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
+		self.textTrack = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Track width:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textTrack.Wrap( -1 )
 
-		choiceLayerChoices = []
-		self.choiceLayer = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceLayerChoices, 0 )
-		self.choiceLayer.SetSelection( 0 )
-		fgSizer.Add( self.choiceLayer, 0, wx.ALL, 5 )
+		fgSizer1.Add( self.textTrack, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
+		choiceTrackChoices = []
+		self.choiceTrack = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceTrackChoices, 0 )
+		self.choiceTrack.SetSelection( 0 )
+		fgSizer1.Add( self.choiceTrack, 0, wx.ALL, 5 )
 
-		fgSizer.Add( ( 0, 0), 0, wx.LEFT|wx.RIGHT, 40 )
+		self.textVia = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Via size:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textVia.Wrap( -1 )
 
-		self.checkOrientation = wx.CheckBox( self, wx.ID_ANY, u"Orientation:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkOrientation, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+		fgSizer1.Add( self.textVia, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
-		choiceOrientationChoices = []
-		self.choiceOrientation = wx.Choice( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceOrientationChoices, 0 )
-		self.choiceOrientation.SetSelection( 0 )
-		fgSizer.Add( self.choiceOrientation, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
-
-		self.checkWidth = wx.CheckBox( self, wx.ID_ANY, u"Width:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkWidth, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.editWidth = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.editWidth, 0, wx.ALL|wx.EXPAND, 5 )
-
-		self.textUnitWith = wx.StaticText( self, wx.ID_ANY, u"unit", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.textUnitWith.Wrap( -1 )
-
-		fgSizer.Add( self.textUnitWith, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.checkVisible = wx.CheckBox( self, wx.ID_ANY, u"Visible", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkVisible, 0, wx.ALIGN_CENTER_VERTICAL|wx.RIGHT, 5 )
+		choiceViaChoices = []
+		self.choiceVia = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceViaChoices, 0 )
+		self.choiceVia.SetSelection( 0 )
+		fgSizer1.Add( self.choiceVia, 0, wx.ALL, 5 )
 
 
-		fgSizer.Add( ( 0, 0), 0, 0, 5 )
+		sbSizer5.Add( fgSizer1, 1, wx.EXPAND, 5 )
 
-		self.checkHeight = wx.CheckBox( self, wx.ID_ANY, u"Height:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkHeight, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.editHeight = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.editHeight, 0, wx.ALL|wx.EXPAND, 5 )
-
-		self.textUnitHeight = wx.StaticText( self, wx.ID_ANY, u"unit", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.textUnitHeight.Wrap( -1 )
-
-		fgSizer.Add( self.textUnitHeight, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.checkItalic = wx.CheckBox( self, wx.ID_ANY, u"Italic", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkItalic, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.buttonClear = wx.Button( self, wx.ID_ANY, u"Clear Log", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.buttonClear, 0, wx.ALL|wx.EXPAND, 5 )
-
-		self.checkThickness = wx.CheckBox( self, wx.ID_ANY, u"Thickness:", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkThickness, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.editThickness = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.editThickness, 0, wx.ALL|wx.EXPAND, 5 )
-
-		self.textUnitThickness = wx.StaticText( self, wx.ID_ANY, u"unit", wx.DefaultPosition, wx.DefaultSize, 0 )
-		self.textUnitThickness.Wrap( -1 )
-
-		fgSizer.Add( self.textUnitThickness, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.checkMirrored = wx.CheckBox( self, wx.ID_ANY, u"Mirrored", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.checkMirrored, 0, wx.ALIGN_CENTER_VERTICAL, 5 )
-
-		self.buttonUpdate = wx.Button( self, wx.ID_ANY, u"Update", wx.DefaultPosition, wx.DefaultSize, 0 )
-		fgSizer.Add( self.buttonUpdate, 0, wx.ALL|wx.EXPAND, 5 )
+		self.checkUnusepad = wx.CheckBox( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Unused pads", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer5.Add( self.checkUnusepad, 0, wx.ALL, 5 )
 
 
-		bSizer1.Add( fgSizer, 0, wx.EXPAND|wx.LEFT|wx.RIGHT, 15 )
+		bSizer8.Add( sbSizer5, 1, wx.BOTTOM|wx.EXPAND|wx.RIGHT, 5 )
 
-		self.staticline = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
-		bSizer1.Add( self.staticline, 0, wx.EXPAND |wx.ALL, 5 )
+		sbSizer6 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Preview" ), wx.VERTICAL )
+
+		self.bitmapPreview = wx.StaticBitmap( sbSizer6.GetStaticBox(), wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer6.Add( self.bitmapPreview, 0, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer8.Add( sbSizer6, 1, wx.BOTTOM|wx.EXPAND|wx.LEFT, 5 )
+
+
+		bSizer5.Add( bSizer8, 1, wx.EXPAND, 5 )
+
+		sbSizer7 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Fanout length" ), wx.HORIZONTAL )
+
+		self.checkUnlimited = wx.CheckBox( sbSizer7.GetStaticBox(), wx.ID_ANY, u"Unlimited", wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer7.Add( self.checkUnlimited, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.textMaximum = wx.StaticText( sbSizer7.GetStaticBox(), wx.ID_ANY, u"Maximum:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textMaximum.Wrap( -1 )
+
+		sbSizer7.Add( self.textMaximum, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.editLength = wx.TextCtrl( sbSizer7.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		sbSizer7.Add( self.editLength, 0, wx.ALL, 5 )
+
+		self.textUnit = wx.StaticText( sbSizer7.GetStaticBox(), wx.ID_ANY, u"unit", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textUnit.Wrap( -1 )
+
+		sbSizer7.Add( self.textUnit, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+
+		bSizer5.Add( sbSizer7, 0, wx.EXPAND, 5 )
+
+		sbSizer8 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Placement of via fanout for:" ), wx.VERTICAL )
+
+		bSizer9 = wx.BoxSizer( wx.HORIZONTAL )
+
+		self.textPackage = wx.StaticText( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Package:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textPackage.Wrap( -1 )
+
+		bSizer9.Add( self.textPackage, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		choicePackageChoices = []
+		self.choicePackage = wx.Choice( sbSizer8.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choicePackageChoices, 0 )
+		self.choicePackage.SetSelection( 0 )
+		bSizer9.Add( self.choicePackage, 0, wx.ALL, 5 )
+
+		self.checkSpecial = wx.CheckBox( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Special package:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer9.Add( self.checkSpecial, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		choiceSpecialChoices = []
+		self.choiceSpecial = wx.Choice( sbSizer8.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceSpecialChoices, 0 )
+		self.choiceSpecial.SetSelection( 0 )
+		bSizer9.Add( self.choiceSpecial, 0, wx.ALL, 5 )
+
+
+		sbSizer8.Add( bSizer9, 0, wx.EXPAND, 5 )
+
+		bSizer10 = wx.BoxSizer( wx.HORIZONTAL )
+
+		sizerAlignment = wx.BoxSizer( wx.VERTICAL )
+
+		self.textAlignment = wx.StaticText( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Alignment:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textAlignment.Wrap( -1 )
+
+		sizerAlignment.Add( self.textAlignment, 0, wx.ALL, 5 )
+
+		choiceAlignmentChoices = []
+		self.choiceAlignment = wx.Choice( sbSizer8.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceAlignmentChoices, 0 )
+		self.choiceAlignment.SetSelection( 0 )
+		sizerAlignment.Add( self.choiceAlignment, 0, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer10.Add( sizerAlignment, 1, wx.EXPAND, 5 )
+
+		sizerDirection = wx.BoxSizer( wx.VERTICAL )
+
+		self.textDirection = wx.StaticText( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Direction:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textDirection.Wrap( -1 )
+
+		sizerDirection.Add( self.textDirection, 0, wx.ALL, 5 )
+
+		choiceDirectionChoices = []
+		self.choiceDirection = wx.Choice( sbSizer8.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceDirectionChoices, 0 )
+		self.choiceDirection.SetSelection( 0 )
+		sizerDirection.Add( self.choiceDirection, 0, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer10.Add( sizerDirection, 1, wx.EXPAND, 5 )
+
+		sizerSpace = wx.BoxSizer( wx.VERTICAL )
+
+		self.textSpace = wx.StaticText( sbSizer8.GetStaticBox(), wx.ID_ANY, u"Spacing:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textSpace.Wrap( -1 )
+
+		sizerSpace.Add( self.textSpace, 0, wx.ALL, 5 )
+
+		choiceSpaceChoices = []
+		self.choiceSpace = wx.Choice( sbSizer8.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceSpaceChoices, 0 )
+		self.choiceSpace.SetSelection( 0 )
+		sizerSpace.Add( self.choiceSpace, 0, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer10.Add( sizerSpace, 1, wx.EXPAND, 5 )
+
+
+		sbSizer8.Add( bSizer10, 1, wx.EXPAND, 5 )
+
+
+		bSizer5.Add( sbSizer8, 0, wx.EXPAND|wx.TOP, 5 )
+
+
+		bSizer4.Add( bSizer5, 1, wx.ALL|wx.EXPAND, 5 )
+
+		bSizer7 = wx.BoxSizer( wx.VERTICAL )
+
+		self.buttonFanout = wx.Button( self, wx.ID_ANY, u"Fanout", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.buttonFanout, 0, wx.ALL|wx.EXPAND, 5 )
+
+		self.buttonClear = wx.Button( self, wx.ID_ANY, u"Clear log", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.buttonClear, 0, wx.ALL|wx.EXPAND, 5 )
+
+
+		bSizer4.Add( bSizer7, 0, wx.EXPAND, 5 )
+
+
+		bSizer1.Add( bSizer4, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.textLog = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,100 ), wx.HSCROLL|wx.TE_MULTILINE|wx.TE_READONLY )
-		bSizer1.Add( self.textLog, 1, wx.ALL|wx.EXPAND, 5 )
+		bSizer1.Add( self.textLog, 0, wx.ALL|wx.EXPAND, 5 )
 
 
 		self.SetSizer( bSizer1 )

@@ -7,7 +7,7 @@ from .controller.controller import Controller
 
 class LengthMatchingAction(pcbnew.ActionPlugin):
 	def defaults(self):
-		self.name = "Edit Footprint Text"
+		self.name = "Fanout Tools"
 		self.category = "Modify PCB"
 		self.description = "Edit reference value on layer Silkscreen and Fabrication"
 		self.show_toolbar_button = True # Optional, defaults to False
