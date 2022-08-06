@@ -172,4 +172,4 @@ class FilterCombo(wx.ComboCtrl):
     def GetCategoryValues(self):
         print('\tFilterCombo.GetCategoryValues')
         value = self.GetValue()
-        return tuple(value.split(" "))
+        return value

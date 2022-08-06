@@ -54,7 +54,7 @@ class FanoutDialog ( wx.Dialog ):
 		choiceTrackChoices = []
 		self.choiceTrack = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceTrackChoices, 0 )
 		self.choiceTrack.SetSelection( 0 )
-		fgSizer1.Add( self.choiceTrack, 0, wx.ALL, 5 )
+		fgSizer1.Add( self.choiceTrack, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.textVia = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Via size:", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textVia.Wrap( -1 )
@@ -64,7 +64,7 @@ class FanoutDialog ( wx.Dialog ):
 		choiceViaChoices = []
 		self.choiceVia = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceViaChoices, 0 )
 		self.choiceVia.SetSelection( 0 )
-		fgSizer1.Add( self.choiceVia, 0, wx.ALL, 5 )
+		fgSizer1.Add( self.choiceVia, 0, wx.ALL|wx.EXPAND, 5 )
 
 
 		sbSizer5.Add( fgSizer1, 1, wx.EXPAND, 5 )

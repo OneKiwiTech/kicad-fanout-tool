@@ -1,5 +1,5 @@
 from ..model.model import Model
-from ..view.view import FanoutDialog
+from ..view.view import FanoutView
 from .logtext import LogText
 import sys
 import logging
@@ -7,10 +7,14 @@ import logging.config
 import wx
 import pcbnew
 import math
+from ..kicad.board import get_current_unit
 
 class Controller:
     def __init__(self):
-        self.view = FanoutDialog(None)
+        self.view = FanoutView()
+        self.reference = None
+        self.tracks = []
+        self.vias = []
         self.logger = self.init_logger(self.view.textLog)
         self.model = Model(pcbnew.GetBoard(), self.logger)
 
@@ -18,6 +22,8 @@ class Controller:
         self.view.buttonFanout.Bind(wx.EVT_BUTTON, self.OnButtonFanout)
 
         self.board = pcbnew.GetBoard()
+        self.add_references()
+        self.get_tracks_vias()
         self.footprint = self.board.FindFootprintByReference('U3')
         self.angle = self.footprint.GetOrientationDegrees()
         self.pads = self.footprint.Pads()
@@ -33,6 +39,13 @@ class Controller:
         self.view.Destroy()
 
     def OnButtonFanout(self, event):
+        reference = self.view.GetReferenceSelected()
+        if reference == '':
+            self.logger.error('Please chose a Reference')
+        else:
+            self.logger.info('Selected reference: %s' %reference)
+            self.model.update_reference(reference)
+            
         self.logger.info('Update %s' %self.angle)
         minx = self.pads[0].GetPosition().x
         maxx = self.pads[0].GetPosition().x
@@ -107,6 +120,51 @@ class Controller:
             self.board.Add(track3)
         pcbnew.Refresh()
         self.logger.info('end:' )
+
+    def add_references(self):
+        references = []
+        footprints = self.board.GetFootprints()
+        for footprint in footprints:
+            ref = str(footprint.GetReference())
+            references.append(ref)
+        self.view.AddReferences(references)
+
+    def get_tracks_vias(self):
+        units = pcbnew.GetUserUnits()
+        unit = ''
+        scale = 1
+        # pcbnew.EDA_UNITS_INCHES = 0
+        if units == pcbnew.EDA_UNITS_INCHES:
+            unit = 'in'
+            scale = 25400000
+        # pcbnew.EDA_UNITS_MILLIMETRES = 1
+        elif units == pcbnew.EDA_UNITS_MILLIMETRES:
+            unit = 'mm'
+            scale = 1000000
+        # pcbnew.EDA_UNITS_MILS = 5
+        elif units == pcbnew.EDA_UNITS_MILS:
+            unit = 'mil'
+            scale = 25400
+        tracks = self.board.GetDesignSettings().m_TrackWidthList
+        vias = self.board.GetDesignSettings().m_ViasDimensionsList
+        tracklist = []
+        vialist = []
+        for track in tracks:
+            if track > 0:
+                self.tracks.append(track)
+                display = str(track/scale) + ' ' + unit
+                tracklist.append(display)
+        # pcbnew.VIA_DIMENSION
+        for via in vias:
+            if via.m_Diameter > 0:
+                self.vias.append(via)
+                diam = via.m_Diameter
+                hole = via.m_Drill
+                display = str(diam/scale) + ' / ' + str(hole/scale) + ' ' + unit
+                vialist.append(display)
+        self.view.AddTracksWidth(tracklist)
+        self.view.AddViasSize(vialist)
+        self.logger.info('get_design_settings')
 
     def init_logger(self, texlog):
         root = logging.getLogger()
