@@ -16,7 +16,7 @@ class Controller:
         self.tracks = []
         self.vias = []
         self.logger = self.init_logger(self.view.textLog)
-        self.model = Model(pcbnew.GetBoard(), self.logger)
+        self.model = Model(self.board, self.logger)
 
         # Connect Events
         self.view.buttonFanout.Bind(wx.EVT_BUTTON, self.OnButtonFanout)
