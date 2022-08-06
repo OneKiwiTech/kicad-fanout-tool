@@ -20,3 +20,9 @@ class FanoutView(FanoutDialog):
     def AddViasSize(self, vias):
         self.choiceVia.Append(vias)
         self.choiceVia.SetSelection(0)
+
+    def GetTrackSelectedIndex(self):
+        return self.choiceTrack.GetSelection()
+
+    def GetViaSelectedIndex(self):
+        return self.choiceVia.GetSelection()

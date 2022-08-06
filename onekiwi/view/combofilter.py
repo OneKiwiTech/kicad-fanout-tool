@@ -10,14 +10,16 @@ class FilterComboPopup(wx.ComboPopup):
         self.items = []
     
     def AddItem(self, txt):
-        print('FilterComboPopup.AddItem')
+        pass
+        #print('FilterComboPopup.AddItem')
         #self.lc.InsertItem(self.lc.GetItemCount(), txt)
 
     def OnMotion(self, event):
-        print('FilterComboPopup.OnMotion')
+        pass
+        #print('FilterComboPopup.OnMotion')
 
     def OnLeftDown(self, event):
-        print('FilterComboPopup.OnLeftDown')
+        #print('FilterComboPopup.OnLeftDown')
         self.Dismiss()
 
 
@@ -29,14 +31,14 @@ class FilterComboPopup(wx.ComboPopup):
     # This is called immediately after construction finishes.  You can
     # use self.GetCombo if needed to get to the ComboCtrl instance.
     def Init(self):
-        print('FilterComboPopup.Init')
+        #print('FilterComboPopup.Init')
         self.value = None
         #self.curitem = -1
 
 
     # Create the popup child control.  Return true for success.
     def Create(self, parent):
-        print('FilterComboPopup.Create')
+        #print('FilterComboPopup.Create')
         self.control = wx.Panel(parent, wx.ID_ANY, style = wx.TAB_TRAVERSAL|wx.RAISED_BORDER)
         sizerMain = wx.BoxSizer(wx.VERTICAL)
         menu = wx.Menu()
@@ -63,12 +65,12 @@ class FilterComboPopup(wx.ComboPopup):
 
 
     def OnLeftDoubleClick(self, event):
-        print('OnLeftDoubleClick')
+        #print('OnLeftDoubleClick')
         self.value = event.GetEventObject().GetStringSelection()
         self.combo.SetValue(self.value)
     
     def OnTextChange(self, event):
-        print('OnTextChange')
+        #print('OnTextChange')
         value = event.GetEventObject().GetValue()
         self.listFilter.Clear()
         for item in self.items:
@@ -76,51 +78,52 @@ class FilterComboPopup(wx.ComboPopup):
                 self.listFilter.Append(item)
     
     def OnSetFocus(self, event):
-        print('OnSetFocus')
+        #print('OnSetFocus')
         self.searchCtrl.Clear()
 
     # Return the widget that is to be used for the popup
     def GetControl(self):
-        print('FilterComboPopup.GetControl')
+        #print('FilterComboPopup.GetControl')
         return self.control
 
     # Called just prior to displaying the popup, you can use it to
     # 'select' the current item.
     def SetStringValue(self, val):
-        print('FilterComboPopup.SetStringValue %s' %val)
+        pass
+        #print('FilterComboPopup.SetStringValue %s' %val)
 
     # Return a string representation of the current item.
     def GetStringValue(self):
-        print('FilterComboPopup.GetStringValue')
+        #print('FilterComboPopup.GetStringValue')
         return "GetStringValue"
 
     # Called immediately after the popup is shown
     def OnPopup(self):
-        print('FilterComboPopup.OnPopup')
+        #print('FilterComboPopup.OnPopup')
         wx.ComboPopup.OnPopup(self)
 
     # Called when popup is dismissed
     def OnDismiss(self):
-        print('FilterComboPopup.OnDismiss')
+        #print('FilterComboPopup.OnDismiss')
         wx.ComboPopup.OnDismiss(self)
 
     # This is called to custom paint in the combo control itself
     # (ie. not the popup).  Default implementation draws value as
     # string.
     def PaintComboControl(self, dc, rect):
-        print('FilterComboPopup.PaintComboControl')
+        #print('FilterComboPopup.PaintComboControl')
         wx.ComboPopup.PaintComboControl(self, dc, rect)
 
     # Receives key events from the parent ComboCtrl.  Events not
     # handled should be skipped, as usual.
     def OnComboKeyEvent(self, event):
-        print('FilterComboPopup.OnComboKeyEvent')
+        #print('FilterComboPopup.OnComboKeyEvent')
         wx.ComboPopup.OnComboKeyEvent(self, event)
 
     # Implement if you need to support special action when user
     # double-clicks on the parent wxComboCtrl.
     def OnComboDoubleClick(self):
-        print('FilterComboPopup.OnComboDoubleClick')
+        #print('FilterComboPopup.OnComboDoubleClick')
         wx.ComboPopup.OnComboDoubleClick(self)
 
     # Return final size of popup. Called on every popup, just prior to OnPopup.
@@ -129,7 +132,7 @@ class FilterComboPopup(wx.ComboPopup):
     # maxHeight = max height for window, as limited by screen size
     #   and should only be rounded down, if necessary.
     def GetAdjustedSize(self, minWidth, prefHeight, maxHeight):
-        print('FilterComboPopup.GetAdjustedSize: %d, %d, %d' % (minWidth, prefHeight, maxHeight))
+        #print('FilterComboPopup.GetAdjustedSize: %d, %d, %d' % (minWidth, prefHeight, maxHeight))
         return wx.ComboPopup.GetAdjustedSize(self, minWidth, prefHeight, maxHeight)
 
     # Return true if you want delay the call to Create until the popup
@@ -138,7 +141,7 @@ class FilterComboPopup(wx.ComboPopup):
     # immediately.
     # Default returns false.
     def LazyCreate(self):
-        print('FilterComboPopup.LazyCreate')
+        #print('FilterComboPopup.LazyCreate')
         return wx.ComboPopup.LazyCreate(self)
 
 class FilterCombo(wx.ComboCtrl):
@@ -155,21 +158,21 @@ class FilterCombo(wx.ComboCtrl):
         self.panel.listFilter.Append(lists)
 
     def SetSelection(self, n):
-        print('\tFilterCombo.SetSelection')
+        #print('\tFilterCombo.SetSelection')
         if n == -1:
             self.panel.SetStringValue("")
 
     def SetCategoryLabels(self, labels):
-        print('\tFilterCombo.SetCategoryLabels')
+        #print('\tFilterCombo.SetCategoryLabels')
         self.panel = FilterComboPopup(labels)
         self.SetPopupControl(self.panel)
 
     def SetCategoryValues(self, values):
-        print('\tFilterCombo.SetCategoryValues')
+        #print('\tFilterCombo.SetCategoryValues')
         value = " ".join(values)
         self.SetValue(value)
 
     def GetCategoryValues(self):
-        print('\tFilterCombo.GetCategoryValues')
+        #print('\tFilterCombo.GetCategoryValues')
         value = self.GetValue()
         return value

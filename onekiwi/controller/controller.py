@@ -7,11 +7,11 @@ import logging.config
 import wx
 import pcbnew
 import math
-from ..kicad.board import get_current_unit
 
 class Controller:
-    def __init__(self):
+    def __init__(self, board):
         self.view = FanoutView()
+        self.board = board
         self.reference = None
         self.tracks = []
         self.vias = []
@@ -20,8 +20,8 @@ class Controller:
 
         # Connect Events
         self.view.buttonFanout.Bind(wx.EVT_BUTTON, self.OnButtonFanout)
-
-        self.board = pcbnew.GetBoard()
+        #pcbnew.GetBoard()
+        
         self.add_references()
         self.get_tracks_vias()
         self.footprint = self.board.FindFootprintByReference('U3')
@@ -42,10 +42,22 @@ class Controller:
         reference = self.view.GetReferenceSelected()
         if reference == '':
             self.logger.error('Please chose a Reference')
+            return
         else:
             self.logger.info('Selected reference: %s' %reference)
-            self.model.update_reference(reference)
             
+        if len(self.tracks) > 0:
+            track_index = self.view.GetTrackSelectedIndex()
+        else:
+            self.logger.error('Please add track width')
+            return
+        if len(self.tracks) > 0:
+            via_index = self.view.GetViaSelectedIndex()
+        else:
+            self.logger.error('Please add via')
+            return
+        self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
+        """
         self.logger.info('Update %s' %self.angle)
         minx = self.pads[0].GetPosition().x
         maxx = self.pads[0].GetPosition().x
@@ -120,6 +132,7 @@ class Controller:
             self.board.Add(track3)
         pcbnew.Refresh()
         self.logger.info('end:' )
+        """
 
     def add_references(self):
         references = []
@@ -143,6 +156,9 @@ class Controller:
             scale = 1000000
         # pcbnew.EDA_UNITS_MILS = 5
         elif units == pcbnew.EDA_UNITS_MILS:
+            unit = 'mil'
+            scale = 25400
+        else:
             unit = 'mil'
             scale = 25400
         tracks = self.board.GetDesignSettings().m_TrackWidthList
@@ -170,8 +186,8 @@ class Controller:
         root = logging.getLogger()
         root.setLevel(logging.DEBUG)
         # Log to stderr
-        #handler1 = logging.StreamHandler(sys.stderr)
-        #handler1.setLevel(logging.DEBUG)
+        handler1 = logging.StreamHandler(sys.stderr)
+        handler1.setLevel(logging.DEBUG)
         # and to our GUI
         handler2 = LogText(texlog)
         handler2.setLevel(logging.DEBUG)
@@ -179,9 +195,9 @@ class Controller:
             "%(asctime)s - %(levelname)s - %(funcName)s -  %(message)s",
             datefmt="%Y.%m.%d %H:%M:%S",
         )
-        #handler1.setFormatter(formatter)
+        handler1.setFormatter(formatter)
         handler2.setFormatter(formatter)
-        #root.addHandler(handler1)
+        root.addHandler(handler1)
         root.addHandler(handler2)
         return logging.getLogger(__name__)
     
