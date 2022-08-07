@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 version=$(git describe --tags --dirty)
-name=$(echo edit-multi-text-$version.zip)
+name=$(echo fanout-tool-$version.zip)
 
 echo "Building release $version"
 cp metadata.json.template metadata.json
@@ -15,7 +15,7 @@ mv resources/icon_64x64.png resources/icon.png
 
 mkdir plugins
 cp __init__.py plugins/
-cp icon.png plugins/
+#cp icon.png plugins/
 cp -r onekiwi/ plugins/
 
 zip -r $name plugins resources metadata.json
