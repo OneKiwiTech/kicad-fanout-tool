@@ -111,22 +111,21 @@ class BGA:
             ytrack.SetLayer(pcbnew.F_Cu)
             self.board.Add(ytrack)
         else:
-            anphalx = math.tan(self.radian)
-            
+            anphalx = (-1)*math.tan(self.radian)
             anphaly = 1/math.tan(self.radian)
-            bx = self.y0 + anphalx*self.x0
+            bx = self.y0 - anphalx*self.x0
             by = self.y0 - anphaly*self.x0
 
             # y = ax + b
-            y3 = (-1)*anphalx*minx + bx
-            y4 = (-1)*anphalx*maxx + bx
-            xstart = pcbnew.wxPoint(minx, y3)
-            xend = pcbnew.wxPoint(maxx, y4)
+            xyminx = anphalx*minx + bx
+            xymaxx = anphalx*maxx + bx
+            xstart = pcbnew.wxPoint(minx, xyminx)
+            xend = pcbnew.wxPoint(maxx, xymaxx)
 
-            y1 = anphaly*minx + by
-            y2 = anphaly*maxx + by
-            ystart = pcbnew.wxPoint(minx, y1)
-            yend = pcbnew.wxPoint(maxx, y2)
+            yyminx = anphaly*minx + by
+            yymaxx = anphaly*maxx + by
+            ystart = pcbnew.wxPoint(minx, yyminx)
+            yend = pcbnew.wxPoint(maxx, yymaxx)
 
             xtrack = pcbnew.PCB_TRACK(self.board)
             xtrack.SetStart(xstart)
@@ -134,8 +133,6 @@ class BGA:
             xtrack.SetWidth(self.track)
             xtrack.SetLayer(pcbnew.F_Cu)
             self.board.Add(xtrack)
-
-            
 
             ytrack = pcbnew.PCB_TRACK(self.board)
             ytrack.SetStart(ystart)

@@ -20,17 +20,9 @@ class Controller:
 
         # Connect Events
         self.view.buttonFanout.Bind(wx.EVT_BUTTON, self.OnButtonFanout)
-        #pcbnew.GetBoard()
         
         self.add_references()
         self.get_tracks_vias()
-        self.footprint = self.board.FindFootprintByReference('U3')
-        self.angle = self.footprint.GetOrientationDegrees()
-        self.pads = self.footprint.Pads()
-        self.x0 = self.footprint.GetPosition().x
-        self.y0 = self.footprint.GetPosition().y
-        self.radian = self.footprint.GetOrientationRadians()
-        self.degrees = self.footprint.GetOrientationDegrees()
 
     def Show(self):
         self.view.Show()
@@ -57,82 +49,6 @@ class Controller:
             self.logger.error('Please add via')
             return
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
-        """
-        self.logger.info('Update %s' %self.angle)
-        minx = self.pads[0].GetPosition().x
-        maxx = self.pads[0].GetPosition().x
-        miny = self.pads[0].GetPosition().y
-        maxy = self.pads[0].GetPosition().y
-        if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
-            self.footprint.SetOrientationDegrees(0)
-        for ind, pad in enumerate(self.pads, 1):
-            if minx > pad.GetPosition().x:
-                minx = pad.GetPosition().x
-            if maxx < pad.GetPosition().x:
-                maxx = pad.GetPosition().x
-            if miny > pad.GetPosition().y:
-                miny = pad.GetPosition().y
-            if maxy < pad.GetPosition().y:
-                maxy = pad.GetPosition().y
-        self.footprint.SetOrientationDegrees(self.degrees)
-        self.logger.info('min: %d, %d' %(minx, miny))
-        self.logger.info('max: %d, %d' %(maxx, maxy))
-
-        if self.degrees in [0.0 , 90.0, 180.0, -90]:
-            x = (minx + maxx)/2
-            y = (miny + maxy)/2
-            start1 = pcbnew.wxPoint(x, maxy)
-            end1 = pcbnew.wxPoint(x, miny)
-            start2 = pcbnew.wxPoint(minx, y)
-            end2 = pcbnew.wxPoint(maxx, y)
-            track1 = pcbnew.PCB_TRACK(self.board)
-            track1.SetStart(start1)
-            track1.SetEnd(end1)
-            track1.SetLayer(pcbnew.F_Cu)
-            self.board.Add(track1)
-
-            track2 = pcbnew.PCB_TRACK(self.board)
-            track2.SetStart(start2)
-            track2.SetEnd(end2)
-            track2.SetLayer(pcbnew.F_Cu)
-            self.board.Add(track2)
-        else:
-            anphal = math.tan(self.radian)
-            self.logger.info('x0: %d, y0: %d' %(self.x0, self.y0))
-            b1 = self.y0 + anphal*self.x0
-            x1 = minx
-            x2 = maxx
-
-            y3 = (-1)*anphal*x1 + b1
-            y4 = (-1)*anphal*x2 + b1
-            start2 = pcbnew.wxPoint(x1, y3)
-            end2 = pcbnew.wxPoint(x2, y4)
-            self.logger.info('start2: %d, %d' %(x1, y3))
-            self.logger.info('end2: %d, %d' %(x2, y4))
-
-            track2 = pcbnew.PCB_TRACK(self.board)
-            track2.SetStart(start2)
-            track2.SetEnd(end2)
-            track2.SetLayer(pcbnew.F_Cu)
-            self.board.Add(track2)
-
-            ax = 1/anphal
-            bx = self.y0 - ax*self.x0
-
-            y1 = ax*x1 + bx
-            y2 = ax*x2 + bx
-            self.logger.info('anphal: %f, b0: %f' %(anphal, bx))
-            start3 = pcbnew.wxPoint(x1, y1)
-            end3 = pcbnew.wxPoint(x2, y2)
-
-            track3 = pcbnew.PCB_TRACK(self.board)
-            track3.SetStart(start3)
-            track3.SetEnd(end3)
-            track3.SetLayer(pcbnew.F_Cu)
-            self.board.Add(track3)
-        pcbnew.Refresh()
-        self.logger.info('end:' )
-        """
 
     def add_references(self):
         references = []
