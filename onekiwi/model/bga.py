@@ -94,7 +94,7 @@ class BGA:
                 self.logger.info('%d. %s' %(i, str(arr)))
         """
         self.footprint.SetOrientationDegrees(self.degrees)
-
+        """
         if self.degrees in [0.0 , 90.0, 180.0, -90]:
             x = (minx + maxx)/2
             y = (miny + maxy)/2
@@ -175,7 +175,8 @@ class BGA:
             track2.SetLayer(pcbnew.F_Cu)
             self.board.Add(track2)
         pcbnew.Refresh()
-    
+        """
+        
     def fanout(self):
         if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
             for pad in self.pads:
@@ -241,24 +242,64 @@ class BGA:
         else:
             anphalx = (-1)*math.tan(self.radian)
             anphaly = 1/math.tan(self.radian)
-            bx = self.y0 - anphalx*self.x0
-            by = self.y0 - anphaly*self.x0
-
+            bx0 = self.y0 - anphalx*self.x0
+            by0 = self.y0 - anphaly*self.x0
+            
+            pax = -1*math.tan(self.radian_pad)
+            pay = 1/math.tan(self.radian_pad)
             pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
             for pad in self.pads:
                 pos = pad.GetPosition()
                 net = pad.GetNetCode()
-                y1 = anphalx*pos.x + bx
-                y2 = anphaly*pos.x + by
+                y1 = anphalx*pos.x + bx0
+                y2 = anphaly*pos.x + by0
+                pbx = pos.y - pax*pos.x
+                pby = pos.y - pay*pos.x
+
+                # d^2 = (x - x0)^2 + (y - y0)^2
+                #     = (x - x0)^2 + (a.x + b - y0)^2
+                #     = #x^2 - #2x.x0 + #x0^2 + #a^2.x^2 + #a.b.x - #a.y0.x + #a.b.x + #b^2 - #b.y0 - #a.y0.x - b.y0 + y0^2
+                # = (1 + a.a)x.x = (-2.x0 + 2.a.b - 2.a.y0)x + (x0.x0 + b.b - 2.b.y0 + y0.y0) - d.d
+                ax = pax*pax + 1
+                bx = 2*pax*pbx - 2*pos.x - 2*pax*pos.y
+                cx = pos.x*pos.x + pbx*pbx + pos.y*pos.y - 2*pbx*pos.y - pitch*pitch
+
+                ay = pay*pay + 1
+                by = 2*pay*pby - 2*pos.x - 2*pay*pos.y
+                cy = pos.x*pos.x + pby*pby + pos.y*pos.y - 2*pby*pos.y - pitch*pitch
+
+                deltax = bx*bx - 4*ax*cx
+                deltay = by*by - 4*ay*cy
+                if deltax > 0:
+                    x1 = (-(bx) + math.sqrt(deltax))/(2*ax)
+                    x2 = (-(bx) - math.sqrt(deltax))/(2*ax)
+                if deltay > 0:
+                    x3 = (-(by) + math.sqrt(deltay))/(2*ay)
+                    x4 = (-(by) - math.sqrt(deltay))/(2*ay)
                 if pos.y > y1:
                     if pos.y > y2:
                         # bottom-left
-                        x = pos.x + pitch
-                        y = pos.y + pitch
-                    
-                        end = pcbnew.wxPoint(x, y)
-                        self.add_track(net, pos, end)
-                    #self.add_via(net, end)
+                        x = x2
+                        y = pax*x + pbx
+                    else:
+                        # bottom-right
+                        x = x3
+                        y = pay*x + pby
+                    end = pcbnew.wxPoint(x, y)
+                    self.add_track(net, pos, end)
+                    self.add_via(net, end)
+                else:
+                    if pos.y > y2:
+                        # top-left
+                        x = x4
+                        y = pay*x + pby
+                    else:
+                        # bottom-right
+                        x = x1
+                        y = pax*x + pbx
+                    end = pcbnew.wxPoint(x, y)
+                    self.add_track(net, pos, end)
+                    self.add_via(net, end)
         pcbnew.Refresh()
     
     def add_track(self, net, start, end):
