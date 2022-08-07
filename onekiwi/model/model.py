@@ -16,5 +16,8 @@ class Model:
         self.track = track
         self.via = via
         self.bga = BGA(self.board, self.reference, self.track, self.via, self.logger)
+    
+    def fanout(self):
+        self.bga.fanout()
 
     

@@ -141,3 +141,52 @@ class BGA:
             ytrack.SetLayer(pcbnew.F_Cu)
             self.board.Add(ytrack)
         pcbnew.Refresh()
+    
+    def fanout(self):
+        if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
+            for pad in self.pads:
+                pos = pad.GetPosition()
+                net = pad.GetNetCode()
+                if pos.y > self.y0:
+                    if pos.x > self.x0:
+                        # II 225
+                        x = pos.x + self.pitchx/2
+                        y = pos.y + self.pitchy/2
+                    else:
+                        # III 135
+                        x = pos.x - self.pitchx/2
+                        y = pos.y + self.pitchy/2
+                    end = pcbnew.wxPoint(x, y)
+                    self.add_track(net, pos, end)
+                    self.add_via(net, end)
+                else:
+                    if pos.x > self.x0:
+                        # I 315
+                        x = pos.x + self.pitchx/2
+                        y = pos.y - self.pitchy/2
+                    else:
+                        # IV 45
+                        x = pos.x - self.pitchx/2
+                        y = pos.y - self.pitchy/2
+                    end = pcbnew.wxPoint(x, y)
+                    self.add_track(net, pos, end)
+                    self.add_via(net, end)
+        pcbnew.Refresh()
+    
+    def add_track(self, net, start, end):
+        track = pcbnew.PCB_TRACK(self.board)
+        track.SetStart(start)
+        track.SetEnd(end)
+        track.SetWidth(self.track)
+        track.SetLayer(pcbnew.F_Cu)
+        track.SetNetCode(net)
+        self.board.Add(track)
+    
+    def add_via(self, net, pos):
+        via = pcbnew.PCB_VIA(self.board)
+        via.SetViaType(pcbnew.VIATYPE_THROUGH)
+        via.SetPosition(pos)
+        via.SetWidth(int(self.via.m_Diameter))
+        via.SetDrill(self.via.m_Drill)
+        via.SetNetCode(net)
+        self.board.Add(via)

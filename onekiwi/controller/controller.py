@@ -6,7 +6,6 @@ import logging
 import logging.config
 import wx
 import pcbnew
-import math
 
 class Controller:
     def __init__(self, board):
@@ -49,6 +48,7 @@ class Controller:
             self.logger.error('Please add via')
             return
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
+        self.model.fanout()
 
     def add_references(self):
         references = []
