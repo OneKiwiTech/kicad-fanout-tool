@@ -1,3 +1,5 @@
+import pcbnew
+import math
 
 class BGA:
     def __init__(self, board, reference, track, via, logger):
@@ -11,14 +13,15 @@ class BGA:
 
         self.logger.info(reference)
         self.footprint = self.board.FindFootprintByReference(reference)
-        self.angle = self.footprint.GetOrientationDegrees()
+        self.radian = self.footprint.GetOrientationRadians()
+        self.degrees = self.footprint.GetOrientationDegrees()
         self.pads = self.footprint.Pads()
         self.x0 = self.footprint.GetPosition().x
         self.y0 = self.footprint.GetPosition().y
         self.init_data()
     
     def init_data(self):
-        if self.angle not in [0.0 , 90.0, 180.0, -90.0]:
+        if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
             self.footprint.SetOrientationDegrees(0)
         pos_x = []
         pos_y = []
@@ -85,5 +88,59 @@ class BGA:
             for i, arr in enumerate(arrs):
                 self.logger.info('%d. %s' %(i, str(arr)))
         """
-        
-        self.footprint.SetOrientationDegrees(self.angle)
+        self.footprint.SetOrientationDegrees(self.degrees)
+
+        if self.degrees in [0.0 , 90.0, 180.0, -90]:
+            x = (minx + maxx)/2
+            y = (miny + maxy)/2
+            xstart = pcbnew.wxPoint(x, maxy)
+            xend = pcbnew.wxPoint(x, miny)
+            ystart = pcbnew.wxPoint(minx, y)
+            yend = pcbnew.wxPoint(maxx, y)
+            xtrack = pcbnew.PCB_TRACK(self.board)
+            xtrack.SetStart(xstart)
+            xtrack.SetEnd(xend)
+            xtrack.SetWidth(self.track)
+            xtrack.SetLayer(pcbnew.F_Cu)
+            self.board.Add(xtrack)
+
+            ytrack = pcbnew.PCB_TRACK(self.board)
+            ytrack.SetStart(ystart)
+            ytrack.SetEnd(yend)
+            ytrack.SetWidth(self.track)
+            ytrack.SetLayer(pcbnew.F_Cu)
+            self.board.Add(ytrack)
+        else:
+            anphalx = math.tan(self.radian)
+            
+            anphaly = 1/math.tan(self.radian)
+            bx = self.y0 + anphalx*self.x0
+            by = self.y0 - anphaly*self.x0
+
+            # y = ax + b
+            y3 = (-1)*anphalx*minx + bx
+            y4 = (-1)*anphalx*maxx + bx
+            xstart = pcbnew.wxPoint(minx, y3)
+            xend = pcbnew.wxPoint(maxx, y4)
+
+            y1 = anphaly*minx + by
+            y2 = anphaly*maxx + by
+            ystart = pcbnew.wxPoint(minx, y1)
+            yend = pcbnew.wxPoint(maxx, y2)
+
+            xtrack = pcbnew.PCB_TRACK(self.board)
+            xtrack.SetStart(xstart)
+            xtrack.SetEnd(xend)
+            xtrack.SetWidth(self.track)
+            xtrack.SetLayer(pcbnew.F_Cu)
+            self.board.Add(xtrack)
+
+            
+
+            ytrack = pcbnew.PCB_TRACK(self.board)
+            ytrack.SetStart(ystart)
+            ytrack.SetEnd(yend)
+            ytrack.SetWidth(self.track)
+            ytrack.SetLayer(pcbnew.F_Cu)
+            self.board.Add(ytrack)
+        pcbnew.Refresh()
