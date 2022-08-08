@@ -24,6 +24,9 @@ class Controller:
         self.view.buttonUndo.Bind(wx.EVT_BUTTON, self.OnButtonUndo)
         self.view.buttonClear.Bind(wx.EVT_BUTTON, self.OnButtonClear)
         self.view.buttonClose.Bind(wx.EVT_BUTTON, self.OnButtonClose)
+        self.view.choicePackage.Bind( wx.EVT_CHOICE, self.OnChoicePackage)
+        self.view.choiceAlignment.Bind( wx.EVT_CHOICE, self.OnChoiceAlignment)
+        self.view.choiceDirection.Bind( wx.EVT_CHOICE, self.OnChoiceDirection)
         
         self.add_references()
         self.get_tracks_vias()
@@ -64,6 +67,34 @@ class Controller:
 
     def OnButtonClose(self, event):
         self.Close()
+
+    def OnChoicePackage(self, event):
+        index = event.GetEventObject().GetSelection()
+        value = event.GetEventObject().GetString(index)
+        package = self.packages[index]
+        alignments = []
+        directions = []
+        for i, ali in enumerate(package.alignments, 0):
+            alignments.append(ali.name)
+            if i == 0:
+                directions = ali.directions.copy()
+        self.view.ClearAlignment()
+        self.view.ClearDirection()
+        if value == 'BGA staggered':
+            alignments.clear()
+        self.view.AddAlignment(alignments)
+        self.view.AddDirection(directions)
+
+    def OnChoiceAlignment(self, event):
+        align_i = event.GetEventObject().GetSelection()
+        pack_i = self.view.GetPackageIndex()
+        directions = self.packages[pack_i].alignments[align_i].directions
+        self.view.ClearDirection()
+        self.view.AddDirection(directions)
+
+    def OnChoiceDirection(self, event):
+        index = event.GetEventObject().GetSelection()
+        value = event.GetEventObject().GetString(index)
 
     def add_references(self):
         references = []
