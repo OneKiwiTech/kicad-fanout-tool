@@ -180,15 +180,29 @@ class BGA:
         """
         
     def fanout(self):
-        if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
-            self.degrees_0_90_180()
-        elif self.degrees in [45.0 , 135.0, -135.0, -45.0]:
-            self.degrees_45_135()
-        else:
-            self.degrees_any_angle()
+        if self.alignment == 'Quadrant':
+            if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
+                self.quadrant_0_90_180()
+            elif self.degrees in [45.0 , 135.0, -135.0, -45.0]:
+                self.quadrant_45_135()
+            else:
+                self.quadrant_other_angle()
+        elif self.alignment == 'Diagonal':
+            if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
+                self.diagonal_0_90_180()
+            elif self.degrees in [45.0 , 135.0, -135.0, -45.0]:
+                self.diagonal_45_135()
+            else:
+                self.diagonal_other_angle()
+        elif self.alignment == 'X-pattern':
+            if self.direction =='Counterclock':
+                pass
+            if self.direction =='Counterclockwise':
+                pass
         pcbnew.Refresh()
 
-    def degrees_0_90_180(self):
+    # quadrant
+    def quadrant_0_90_180(self):
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
@@ -217,7 +231,7 @@ class BGA:
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
     
-    def degrees_45_135(self):
+    def quadrant_45_135(self):
         bx = self.y0 + self.x0
         by = self.y0 - self.x0
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
@@ -251,7 +265,7 @@ class BGA:
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
 
-    def degrees_any_angle(self):
+    def quadrant_other_angle(self):
         anphalx = (-1)*math.tan(self.radian)
         anphaly = 1/math.tan(self.radian)
         bx0 = self.y0 - anphalx*self.x0
@@ -358,6 +372,100 @@ class BGA:
                 end = pcbnew.wxPoint(x, y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
+
+    # diagonal
+    def diagonal_0_90_180(self):
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            x = 0
+            y = 0
+            if self.direction =='TopLeft':
+                x = pos.x - self.pitchx/2
+                y = pos.y - self.pitchy/2
+            if self.direction =='TopRight':
+                x = pos.x + self.pitchx/2
+                y = pos.y - self.pitchy/2
+            if self.direction =='BottomLeft':
+                x = pos.x - self.pitchx/2
+                y = pos.y + self.pitchy/2
+            if self.direction =='BottomRight':
+                x = pos.x + self.pitchx/2
+                y = pos.y + self.pitchy/2
+            end = pcbnew.wxPoint(x, y)
+            self.add_track(net, pos, end)
+            self.add_via(net, end)
+
+    def diagonal_45_135(self):
+        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            x = pos.x
+            y = pos.y
+            if self.direction =='TopLeft':
+                x = pos.x - pitch
+                y = pos.y
+            if self.direction =='TopRight':
+                x = pos.x + pitch
+                y = pos.y
+            if self.direction =='BottomLeft':
+                x = pos.x
+                y = pos.y + pitch
+            if self.direction =='BottomRight':
+                x = pos.x
+                y = pos.y - pitch
+            end = pcbnew.wxPoint(x, y)
+            self.add_track(net, pos, end)
+            self.add_via(net, end)
+
+    def diagonal_other_angle(self):
+        pax = -1*math.tan(self.radian_pad)
+        pay = 1/math.tan(self.radian_pad)
+        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            pbx = pos.y - pax*pos.x
+            pby = pos.y - pay*pos.x
+
+            # d^2 = (x - x0)^2 + (y - y0)^2
+            #     = (x - x0)^2 + (a.x + b - y0)^2
+            #     = #x^2 - #2x.x0 + #x0^2 + #a^2.x^2 + #a.b.x - #a.y0.x + #a.b.x + #b^2 - #b.y0 - #a.y0.x - b.y0 + y0^2
+            # = (1 + a.a)x.x = (-2.x0 + 2.a.b - 2.a.y0)x + (x0.x0 + b.b - 2.b.y0 + y0.y0) - d.d
+            ax = pax*pax + 1
+            bx = 2*pax*pbx - 2*pos.x - 2*pax*pos.y
+            cx = pos.x*pos.x + pbx*pbx + pos.y*pos.y - 2*pbx*pos.y - pitch*pitch
+
+            ay = pay*pay + 1
+            by = 2*pay*pby - 2*pos.x - 2*pay*pos.y
+            cy = pos.x*pos.x + pby*pby + pos.y*pos.y - 2*pby*pos.y - pitch*pitch
+
+            deltax = bx*bx - 4*ax*cx
+            deltay = by*by - 4*ay*cy
+            if deltax > 0:
+                x1 = (-(bx) + math.sqrt(deltax))/(2*ax)
+                x2 = (-(bx) - math.sqrt(deltax))/(2*ax)
+            if deltay > 0:
+                x3 = (-(by) + math.sqrt(deltay))/(2*ay)
+                x4 = (-(by) - math.sqrt(deltay))/(2*ay)
+            x = pos.x
+            y = pos.y
+            if self.direction =='TopLeft':
+                x = x4
+                y = pay*x + pby
+            if self.direction =='TopRight':
+                x = x2
+                y = pax*x + pbx
+            if self.direction =='BottomLeft':
+                x = x1
+                y = pax*x + pbx
+            if self.direction =='BottomRight':
+                x = x3
+                y = pay*x + pby
+            end = pcbnew.wxPoint(x, y)
+            self.add_track(net, pos, end)
+            self.add_via(net, end)
 
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
