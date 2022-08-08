@@ -35,6 +35,11 @@ class FanoutView(FanoutDialog):
         index = self.choicePackage.GetSelection()
         return index
     
+    def GetPackageValue(self):
+        index = self.choicePackage.GetSelection()
+        value = self.choicePackage.GetString(index)
+        return value
+    
     def AddAlignment(self, items):
         self.choiceAlignment.Append(items)
         self.choiceAlignment.SetSelection(0)
@@ -46,6 +51,11 @@ class FanoutView(FanoutDialog):
         index = self.choiceAlignment.GetSelection()
         return index
     
+    def GetAlignmentValue(self):
+        index = self.choiceAlignment.GetSelection()
+        value = self.choiceAlignment.GetString(index)
+        return value
+    
     def AddDirection(self, items):
         self.choiceDirection.Append(items)
         self.choiceDirection.SetSelection(0)
@@ -56,3 +66,8 @@ class FanoutView(FanoutDialog):
     def GetDirectionIndex(self):
         index = self.choiceDirection.GetSelection()
         return index
+    
+    def GetDirectionValue(self):
+        index = self.choiceDirection.GetSelection()
+        value = self.choiceDirection.GetString(index)
+        return value

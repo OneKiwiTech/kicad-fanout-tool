@@ -10,15 +10,27 @@ class Model:
         self.reference = None
         self.track = None
         self.via = None
+        self.package = None
+        self.alignment = None
+        self.direction = None
 
     def update_data(self, reference, track, via):
         self.reference = reference
         self.track = track
         self.via = via
-        self.bga = BGA(self.board, self.reference, self.track, self.via, self.logger)
-    
+
+    def update_package(self, package, alignment, direction):
+        self.package = package
+        self.alignment = alignment
+        self.direction = direction
+
     def fanout(self):
-        self.bga.fanout()
+        if self.package == 'BGA':
+            self.bga = BGA(
+                self.board, self.reference, self.track, self.via, 
+                self.alignment, self.direction, self.logger
+            )
+            self.bga.fanout()
     
     def remove_track_via(self):
         self.bga.remove_track_via()

@@ -2,12 +2,14 @@ import pcbnew
 import math
 
 class BGA:
-    def __init__(self, board, reference, track, via, logger):
+    def __init__(self, board, reference, track, via, alignment, direction, logger):
         self.logger = logger
         self.board = board
         self.reference = reference
         self.track = track
         self.via = via
+        self.alignment = alignment
+        self.direction = direction
         self.pitchx = 0
         self.pitchy = 0
         self.tracks = []

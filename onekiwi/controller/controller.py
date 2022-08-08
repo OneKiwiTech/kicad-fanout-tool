@@ -56,7 +56,11 @@ class Controller:
         else:
             self.logger.error('Please add via')
             return
+        package = self.view.GetPackageValue()
+        alignment = self.view.GetAlignmentValue()
+        direction = self.view.GetDirectionValue()
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
+        self.model.update_package(package, alignment, direction)
         self.model.fanout()
 
     def OnButtonUndo(self, event):
