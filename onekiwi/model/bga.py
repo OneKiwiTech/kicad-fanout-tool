@@ -195,10 +195,13 @@ class BGA:
             else:
                 self.diagonal_other_angle()
         elif self.alignment == 'X-pattern':
-            if self.direction =='Counterclock':
-                pass
-            if self.direction =='Counterclockwise':
-                pass
+            if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
+                self.xpattern_0_90_180()
+            elif self.degrees in [45.0 , 135.0, -135.0, -45.0]:
+                self.xpattern_45_135()
+            else:
+                self.xpattern_other_angle()
+            
         pcbnew.Refresh()
 
     # quadrant
@@ -463,6 +466,101 @@ class BGA:
             if self.direction =='BottomRight':
                 x = x3
                 y = pay*x + pby
+            end = pcbnew.wxPoint(x, y)
+            self.add_track(net, pos, end)
+            self.add_via(net, end)
+
+    #X-pattern
+    def xpattern_0_90_180(self):
+        bx = self.y0 + self.x0
+        by = self.y0 - self.x0
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            y1 = bx - pos.x
+            y2 = by + pos.x
+            x = 0
+            y = 0
+            if pos.y > y1:
+                if pos.y > y2:
+                    #bottom
+                    if self.direction =='Counterclock':
+                        x = pos.x - self.pitchx/2
+                        y = pos.y + self.pitchy/2
+                    if self.direction =='Counterclockwise':
+                        x = pos.x + self.pitchx/2
+                        y = pos.y + self.pitchy/2
+                else:
+                    #right
+                    if self.direction =='Counterclock':
+                        x = pos.x + self.pitchx/2
+                        y = pos.y + self.pitchy/2
+                    if self.direction =='Counterclockwise':
+                        x = pos.x + self.pitchx/2
+                        y = pos.y - self.pitchy/2
+            else:
+                if pos.y > y2:
+                    #left
+                    if self.direction =='Counterclock':
+                        x = pos.x - self.pitchx/2
+                        y = pos.y - self.pitchy/2
+                    if self.direction =='Counterclockwise':
+                        x = pos.x - self.pitchx/2
+                        y = pos.y + self.pitchy/2
+                else:
+                    #top
+                    if self.direction =='Counterclock':
+                        x = pos.x + self.pitchx/2
+                        y = pos.y - self.pitchy/2
+                    if self.direction =='Counterclockwise':
+                        x = pos.x - self.pitchx/2
+                        y = pos.y - self.pitchy/2
+            end = pcbnew.wxPoint(x, y)
+            self.add_track(net, pos, end)
+            self.add_via(net, end)
+    
+    def xpattern_45_135(self):
+        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            x = 0
+            y = 0
+            if pos.y > self.y0:
+                if pos.x > self.x0:
+                    #bottom-right
+                    if self.direction =='Counterclock':
+                        x = pos.x
+                        y = pos.y + pitch
+                    if self.direction =='Counterclockwise':
+                        x = pos.x + pitch
+                        y = pos.y
+                else:
+                    #bottom-left
+                    if self.direction =='Counterclock':
+                        x = pos.x - pitch
+                        y = pos.y
+                    if self.direction =='Counterclockwise':
+                        x = pos.x
+                        y = pos.y + pitch
+            else:
+                if pos.x > self.x0:
+                    #bottom-right
+                    if self.direction =='Counterclock':
+                        x = pos.x + pitch
+                        y = pos.y
+                    if self.direction =='Counterclockwise':
+                        x = pos.x
+                        y = pos.y - pitch
+                else:
+                    #bottom-left
+                    if self.direction =='Counterclock':
+                        x = pos.x
+                        y = pos.y - pitch
+                    if self.direction =='Counterclockwise':
+                        x = pos.x - pitch
+                        y = pos.y
+                    
             end = pcbnew.wxPoint(x, y)
             self.add_track(net, pos, end)
             self.add_via(net, end)
