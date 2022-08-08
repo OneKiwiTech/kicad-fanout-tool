@@ -179,66 +179,9 @@ class BGA:
         
     def fanout(self):
         if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
-            for pad in self.pads:
-                pos = pad.GetPosition()
-                net = pad.GetNetCode()
-                if pos.y > self.y0:
-                    if pos.x > self.x0:
-                        # bottom-right 225
-                        x = pos.x + self.pitchx/2
-                        y = pos.y + self.pitchy/2
-                    else:
-                        # bottom-left 135
-                        x = pos.x - self.pitchx/2
-                        y = pos.y + self.pitchy/2
-                    end = pcbnew.wxPoint(x, y)
-                    self.add_track(net, pos, end)
-                    self.add_via(net, end)
-                else:
-                    if pos.x > self.x0:
-                        # top-right 315
-                        x = pos.x + self.pitchx/2
-                        y = pos.y - self.pitchy/2
-                    else:
-                        # top-left 45
-                        x = pos.x - self.pitchx/2
-                        y = pos.y - self.pitchy/2
-                    end = pcbnew.wxPoint(x, y)
-                    self.add_track(net, pos, end)
-                    self.add_via(net, end)
+            self.degrees_0_90_180()
         elif self.degrees in [45.0 , 135.0, -135.0, -45.0]:
-            bx = self.y0 + self.x0
-            by = self.y0 - self.x0
-            pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
-            for pad in self.pads:
-                pos = pad.GetPosition()
-                net = pad.GetNetCode()
-                y1 = bx - pos.x
-                y2 = by + pos.x
-                if pos.y > y1:
-                    if pos.y > y2:
-                        # bottom
-                        x = pos.x
-                        y = pos.y + pitch
-                    else:
-                        # left
-                        x = pos.x + pitch
-                        y = pos.y
-                    end = pcbnew.wxPoint(x, y)
-                    self.add_track(net, pos, end)
-                    self.add_via(net, end)
-                else:
-                    if pos.y > y2:
-                        # right
-                        x = pos.x - pitch
-                        y = pos.y
-                    else:
-                        # top
-                        x = pos.x
-                        y = pos.y - pitch
-                    end = pcbnew.wxPoint(x, y)
-                    self.add_track(net, pos, end)
-                    self.add_via(net, end)
+            self.degrees_45_135()
         else:
             anphalx = (-1)*math.tan(self.radian)
             anphaly = 1/math.tan(self.radian)
@@ -276,32 +219,149 @@ class BGA:
                 if deltay > 0:
                     x3 = (-(by) + math.sqrt(deltay))/(2*ay)
                     x4 = (-(by) - math.sqrt(deltay))/(2*ay)
+                degrees_0to45 = self.degrees > 0 and self.degrees < 45
+                degrees_45to90 = self.degrees > 45 and self.degrees < 90
+                degrees_90to135 = self.degrees > 90 and self.degrees < 135
+                degrees_135to180 =self.degrees > 135 and self.degrees < 180
+
+                degrees_n45to0 = self.degrees > -45 and self.degrees < 0
+                degrees_n90to45 = self.degrees > -90 and self.degrees < -45
+                degrees_n135to90 = self.degrees > -135 and self.degrees < -90
+                degrees_n180to135 =self.degrees > -180 and self.degrees < -135
                 if pos.y > y1:
+                    x = 0
+                    y = 0
                     if pos.y > y2:
                         # bottom-left
-                        x = x2
-                        y = pax*x + pbx
+                        if degrees_0to45:
+                            x = x2
+                            y = pax*x + pbx
+                        elif degrees_45to90:
+                            x = x1
+                            y = pax*x + pbx
+                        elif degrees_90to135:
+                            x = x4
+                            y = pay*x + pby
+                        elif degrees_135to180:
+                            x = x3
+                            y = pay*x + pby
+
                     else:
                         # bottom-right
-                        x = x3
-                        y = pay*x + pby
+                        if degrees_0to45:
+                            x = x3
+                            y = pay*x + pby
+                        elif degrees_45to90:
+                            x = x3
+                            y = pay*x + pby
+                        elif degrees_90to135:
+                            x = x2
+                            y = pax*x + pbx
+                        elif degrees_135to180:
+                            x = x2
+                            y = pax*x + pbx
                     end = pcbnew.wxPoint(x, y)
                     self.add_track(net, pos, end)
                     self.add_via(net, end)
                 else:
+                    x = 0
+                    y = 0
                     if pos.y > y2:
                         # top-left
-                        x = x4
-                        y = pay*x + pby
+                        if degrees_0to45:
+                            x = x4
+                            y = pay*x + pby
+                        elif degrees_45to90:
+                            x = x4
+                            y = pay*x + pby
+                        elif degrees_90to135:
+                            x = x1
+                            y = pax*x + pbx
+                        elif degrees_135to180:
+                            x = x1
+                            y = pax*x + pbx
                     else:
                         # bottom-right
-                        x = x1
-                        y = pax*x + pbx
+                        if degrees_0to45:
+                            x = x1
+                            y = pax*x + pbx
+                        elif degrees_45to90:
+                            x = x2
+                            y = pax*x + pbx
+                        elif degrees_90to135:
+                            x = x3
+                            y = pay*x + pby
+                        elif degrees_135to180:
+                            x = x4
+                            y = pay*x + pby
                     end = pcbnew.wxPoint(x, y)
                     self.add_track(net, pos, end)
                     self.add_via(net, end)
         pcbnew.Refresh()
+
+    def degrees_0_90_180(self):
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            if pos.y > self.y0:
+                if pos.x > self.x0:
+                    # bottom-right 225
+                    x = pos.x + self.pitchx/2
+                    y = pos.y + self.pitchy/2
+                else:
+                    # bottom-left 135
+                    x = pos.x - self.pitchx/2
+                    y = pos.y + self.pitchy/2
+                end = pcbnew.wxPoint(x, y)
+                self.add_track(net, pos, end)
+                self.add_via(net, end)
+            else:
+                if pos.x > self.x0:
+                    # top-right 315
+                    x = pos.x + self.pitchx/2
+                    y = pos.y - self.pitchy/2
+                else:
+                    # top-left 45
+                    x = pos.x - self.pitchx/2
+                    y = pos.y - self.pitchy/2
+                end = pcbnew.wxPoint(x, y)
+                self.add_track(net, pos, end)
+                self.add_via(net, end)
     
+    def degrees_45_135(self):
+        bx = self.y0 + self.x0
+        by = self.y0 - self.x0
+        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            y1 = bx - pos.x
+            y2 = by + pos.x
+            if pos.y > y1:
+                if pos.y > y2:
+                    # bottom
+                    x = pos.x
+                    y = pos.y + pitch
+                else:
+                    # left
+                    x = pos.x + pitch
+                    y = pos.y
+                end = pcbnew.wxPoint(x, y)
+                self.add_track(net, pos, end)
+                self.add_via(net, end)
+            else:
+                if pos.y > y2:
+                    # right
+                    x = pos.x - pitch
+                    y = pos.y
+                else:
+                    # top
+                    x = pos.x
+                    y = pos.y - pitch
+                end = pcbnew.wxPoint(x, y)
+                self.add_track(net, pos, end)
+                self.add_via(net, end)
+
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
         track.SetStart(start)

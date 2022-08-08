@@ -193,8 +193,14 @@ class FanoutDialog ( wx.Dialog ):
 		self.buttonFanout = wx.Button( self, wx.ID_ANY, u"Fanout", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7.Add( self.buttonFanout, 0, wx.ALL|wx.EXPAND, 5 )
 
+		self.buttonUndo = wx.Button( self, wx.ID_ANY, u"Undo", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.buttonUndo, 0, wx.ALL|wx.EXPAND, 5 )
+
 		self.buttonClear = wx.Button( self, wx.ID_ANY, u"Clear log", wx.DefaultPosition, wx.DefaultSize, 0 )
 		bSizer7.Add( self.buttonClear, 0, wx.ALL|wx.EXPAND, 5 )
+
+		self.buttonClose = wx.Button( self, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
+		bSizer7.Add( self.buttonClose, 0, wx.ALL|wx.EXPAND, 5 )
 
 
 		bSizer4.Add( bSizer7, 0, wx.EXPAND, 5 )
