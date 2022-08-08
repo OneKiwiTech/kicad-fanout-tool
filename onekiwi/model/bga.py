@@ -385,4 +385,5 @@ class BGA:
     def remove_track_via(self):
         for item in self.tracks:
             self.board.Remove(item)
+        self.tracks.clear()
         pcbnew.Refresh()

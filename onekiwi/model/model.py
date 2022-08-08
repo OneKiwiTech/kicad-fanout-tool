@@ -19,5 +19,8 @@ class Model:
     
     def fanout(self):
         self.bga.fanout()
+    
+    def remove_track_via(self):
+        self.bga.remove_track_via()
 
     

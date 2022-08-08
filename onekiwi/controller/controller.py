@@ -19,6 +19,9 @@ class Controller:
 
         # Connect Events
         self.view.buttonFanout.Bind(wx.EVT_BUTTON, self.OnButtonFanout)
+        self.view.buttonUndo.Bind(wx.EVT_BUTTON, self.OnButtonUndo)
+        self.view.buttonClear.Bind(wx.EVT_BUTTON, self.OnButtonClear)
+        self.view.buttonClose.Bind(wx.EVT_BUTTON, self.OnButtonClose)
         
         self.add_references()
         self.get_tracks_vias()
@@ -49,6 +52,15 @@ class Controller:
             return
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
         self.model.fanout()
+
+    def OnButtonUndo(self, event):
+        self.model.remove_track_via()
+
+    def OnButtonClear(self, event):
+        self.view.textLog.SetValue('')
+
+    def OnButtonClose(self, event):
+        self.Close()
 
     def add_references(self):
         references = []
