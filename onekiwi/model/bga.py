@@ -183,120 +183,7 @@ class BGA:
         elif self.degrees in [45.0 , 135.0, -135.0, -45.0]:
             self.degrees_45_135()
         else:
-            anphalx = (-1)*math.tan(self.radian)
-            anphaly = 1/math.tan(self.radian)
-            bx0 = self.y0 - anphalx*self.x0
-            by0 = self.y0 - anphaly*self.x0
-            
-            pax = -1*math.tan(self.radian_pad)
-            pay = 1/math.tan(self.radian_pad)
-            pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
-            for pad in self.pads:
-                pos = pad.GetPosition()
-                net = pad.GetNetCode()
-                y1 = anphalx*pos.x + bx0
-                y2 = anphaly*pos.x + by0
-                pbx = pos.y - pax*pos.x
-                pby = pos.y - pay*pos.x
-
-                # d^2 = (x - x0)^2 + (y - y0)^2
-                #     = (x - x0)^2 + (a.x + b - y0)^2
-                #     = #x^2 - #2x.x0 + #x0^2 + #a^2.x^2 + #a.b.x - #a.y0.x + #a.b.x + #b^2 - #b.y0 - #a.y0.x - b.y0 + y0^2
-                # = (1 + a.a)x.x = (-2.x0 + 2.a.b - 2.a.y0)x + (x0.x0 + b.b - 2.b.y0 + y0.y0) - d.d
-                ax = pax*pax + 1
-                bx = 2*pax*pbx - 2*pos.x - 2*pax*pos.y
-                cx = pos.x*pos.x + pbx*pbx + pos.y*pos.y - 2*pbx*pos.y - pitch*pitch
-
-                ay = pay*pay + 1
-                by = 2*pay*pby - 2*pos.x - 2*pay*pos.y
-                cy = pos.x*pos.x + pby*pby + pos.y*pos.y - 2*pby*pos.y - pitch*pitch
-
-                deltax = bx*bx - 4*ax*cx
-                deltay = by*by - 4*ay*cy
-                if deltax > 0:
-                    x1 = (-(bx) + math.sqrt(deltax))/(2*ax)
-                    x2 = (-(bx) - math.sqrt(deltax))/(2*ax)
-                if deltay > 0:
-                    x3 = (-(by) + math.sqrt(deltay))/(2*ay)
-                    x4 = (-(by) - math.sqrt(deltay))/(2*ay)
-                degrees_0to45 = self.degrees > 0 and self.degrees < 45
-                degrees_45to90 = self.degrees > 45 and self.degrees < 90
-                degrees_90to135 = self.degrees > 90 and self.degrees < 135
-                degrees_135to180 =self.degrees > 135 and self.degrees < 180
-
-                degrees_n45to0 = self.degrees > -45 and self.degrees < 0
-                degrees_n90to45 = self.degrees > -90 and self.degrees < -45
-                degrees_n135to90 = self.degrees > -135 and self.degrees < -90
-                degrees_n180to135 =self.degrees > -180 and self.degrees < -135
-                if pos.y > y1:
-                    x = 0
-                    y = 0
-                    if pos.y > y2:
-                        # bottom-left
-                        if degrees_0to45:
-                            x = x2
-                            y = pax*x + pbx
-                        elif degrees_45to90:
-                            x = x1
-                            y = pax*x + pbx
-                        elif degrees_90to135:
-                            x = x4
-                            y = pay*x + pby
-                        elif degrees_135to180:
-                            x = x3
-                            y = pay*x + pby
-
-                    else:
-                        # bottom-right
-                        if degrees_0to45:
-                            x = x3
-                            y = pay*x + pby
-                        elif degrees_45to90:
-                            x = x3
-                            y = pay*x + pby
-                        elif degrees_90to135:
-                            x = x2
-                            y = pax*x + pbx
-                        elif degrees_135to180:
-                            x = x2
-                            y = pax*x + pbx
-                    end = pcbnew.wxPoint(x, y)
-                    self.add_track(net, pos, end)
-                    self.add_via(net, end)
-                else:
-                    x = 0
-                    y = 0
-                    if pos.y > y2:
-                        # top-left
-                        if degrees_0to45:
-                            x = x4
-                            y = pay*x + pby
-                        elif degrees_45to90:
-                            x = x4
-                            y = pay*x + pby
-                        elif degrees_90to135:
-                            x = x1
-                            y = pax*x + pbx
-                        elif degrees_135to180:
-                            x = x1
-                            y = pax*x + pbx
-                    else:
-                        # bottom-right
-                        if degrees_0to45:
-                            x = x1
-                            y = pax*x + pbx
-                        elif degrees_45to90:
-                            x = x2
-                            y = pax*x + pbx
-                        elif degrees_90to135:
-                            x = x3
-                            y = pay*x + pby
-                        elif degrees_135to180:
-                            x = x4
-                            y = pay*x + pby
-                    end = pcbnew.wxPoint(x, y)
-                    self.add_track(net, pos, end)
-                    self.add_via(net, end)
+            self.degrees_any_angle()
         pcbnew.Refresh()
 
     def degrees_0_90_180(self):
@@ -358,6 +245,114 @@ class BGA:
                     # top
                     x = pos.x
                     y = pos.y - pitch
+                end = pcbnew.wxPoint(x, y)
+                self.add_track(net, pos, end)
+                self.add_via(net, end)
+
+    def degrees_any_angle(self):
+        anphalx = (-1)*math.tan(self.radian)
+        anphaly = 1/math.tan(self.radian)
+        bx0 = self.y0 - anphalx*self.x0
+        by0 = self.y0 - anphaly*self.x0
+        
+        pax = -1*math.tan(self.radian_pad)
+        pay = 1/math.tan(self.radian_pad)
+        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            y1 = anphalx*pos.x + bx0
+            y2 = anphaly*pos.x + by0
+            pbx = pos.y - pax*pos.x
+            pby = pos.y - pay*pos.x
+
+            # d^2 = (x - x0)^2 + (y - y0)^2
+            #     = (x - x0)^2 + (a.x + b - y0)^2
+            #     = #x^2 - #2x.x0 + #x0^2 + #a^2.x^2 + #a.b.x - #a.y0.x + #a.b.x + #b^2 - #b.y0 - #a.y0.x - b.y0 + y0^2
+            # = (1 + a.a)x.x = (-2.x0 + 2.a.b - 2.a.y0)x + (x0.x0 + b.b - 2.b.y0 + y0.y0) - d.d
+            ax = pax*pax + 1
+            bx = 2*pax*pbx - 2*pos.x - 2*pax*pos.y
+            cx = pos.x*pos.x + pbx*pbx + pos.y*pos.y - 2*pbx*pos.y - pitch*pitch
+
+            ay = pay*pay + 1
+            by = 2*pay*pby - 2*pos.x - 2*pay*pos.y
+            cy = pos.x*pos.x + pby*pby + pos.y*pos.y - 2*pby*pos.y - pitch*pitch
+
+            deltax = bx*bx - 4*ax*cx
+            deltay = by*by - 4*ay*cy
+            if deltax > 0:
+                x1 = (-(bx) + math.sqrt(deltax))/(2*ax)
+                x2 = (-(bx) - math.sqrt(deltax))/(2*ax)
+            if deltay > 0:
+                x3 = (-(by) + math.sqrt(deltay))/(2*ay)
+                x4 = (-(by) - math.sqrt(deltay))/(2*ay)
+            degrees_0to45 = self.degrees > 0 and self.degrees < 45
+            degrees_45to90 = self.degrees > 45 and self.degrees < 90
+            degrees_90to135 = self.degrees > 90 and self.degrees < 135
+            degrees_135to180 =self.degrees > 135 and self.degrees < 180
+            degrees_0to90 = self.degrees > 0 and self.degrees < 90
+            degrees_90to180 =self.degrees > 90 and self.degrees < 180
+
+            degrees_n45to0 = self.degrees > -45 and self.degrees < 0
+            degrees_n90to45 = self.degrees > -90 and self.degrees < -45
+            degrees_n135to90 = self.degrees > -135 and self.degrees < -90
+            degrees_n180to135 =self.degrees > -180 and self.degrees < -135
+            degrees_n180to90 =self.degrees > -180 and self.degrees < -90
+            degrees_n90to0 = self.degrees > -90 and self.degrees < 0
+            if pos.y > y1:
+                x = 0
+                y = 0
+                if pos.y > y2:
+                    # bottom-left
+                    if degrees_0to45 or degrees_n180to135:
+                        x = x2
+                        y = pax*x + pbx
+                    elif degrees_45to90 or degrees_n135to90:
+                        x = x1
+                        y = pax*x + pbx
+                    elif degrees_90to135 or degrees_n90to45:
+                        x = x4
+                        y = pay*x + pby
+                    elif degrees_135to180 or degrees_n45to0:
+                        x = x3
+                        y = pay*x + pby
+
+                else:
+                    # bottom-right
+                    if degrees_0to90 or degrees_n180to90:
+                        x = x3
+                        y = pay*x + pby
+                    elif degrees_90to180 or degrees_n90to0:
+                        x = x2
+                        y = pax*x + pbx
+                end = pcbnew.wxPoint(x, y)
+                self.add_track(net, pos, end)
+                self.add_via(net, end)
+            else:
+                x = 0
+                y = 0
+                if pos.y > y2:
+                    # top-left
+                    if degrees_0to90 or degrees_n180to90:
+                        x = x4
+                        y = pay*x + pby
+                    elif degrees_90to180 or degrees_n90to0:
+                        x = x1
+                        y = pax*x + pbx
+                else:
+                    # bottom-right
+                    if degrees_0to45 or degrees_n180to135:
+                        x = x1
+                        y = pax*x + pbx
+                    elif degrees_45to90 or degrees_n135to90:
+                        x = x2
+                        y = pax*x + pbx
+                    elif degrees_90to135 or degrees_n90to45:
+                        x = x3
+                        y = pay*x + pby
+                    elif degrees_135to180 or degrees_n45to0:
+                        x = x4
+                        y = pay*x + pby
                 end = pcbnew.wxPoint(x, y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
