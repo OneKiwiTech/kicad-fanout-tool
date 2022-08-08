@@ -31,3 +31,14 @@ def get_current_unit():
     # pcbnew.EDA_UNITS_MILS = 5
     elif unit == pcbnew.EDA_UNITS_MILS:
         return 'mil'
+
+def get_onekiwi_path():
+    # controller dir
+    current_path = os.path.dirname(__file__)
+    onekiwi_path = os.path.dirname(current_path)
+    return onekiwi_path
+
+def get_image_path():
+    onekiwi_path = get_onekiwi_path()
+    image_path = os.path.join(onekiwi_path, 'image')
+    return image_path

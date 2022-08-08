@@ -1,3 +1,4 @@
+from ..kicad.board import get_image_path
 from ..model.model import Model
 from ..view.view import FanoutView
 from .logtext import LogText
@@ -7,6 +8,7 @@ import logging.config
 import wx
 import pcbnew
 from .package import get_packages
+import os
 
 class Controller:
     def __init__(self, board):
@@ -31,6 +33,10 @@ class Controller:
         self.add_references()
         self.get_tracks_vias()
         self.set_package()
+
+        path = get_image_path()
+        image = os.path.join(path, 'image.svg')
+        self.view.SetImagePreview(image)
 
     def Show(self):
         self.view.Show()

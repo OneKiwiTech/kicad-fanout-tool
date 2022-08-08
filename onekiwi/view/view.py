@@ -71,3 +71,6 @@ class FanoutView(FanoutDialog):
         index = self.choiceDirection.GetSelection()
         value = self.choiceDirection.GetString(index)
         return value
+    
+    def SetImagePreview(self, path):
+        self.bitmapPreview.SetBitmap(wx.Bitmap(path))
