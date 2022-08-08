@@ -6,6 +6,7 @@ import logging
 import logging.config
 import wx
 import pcbnew
+from .package import get_packages
 
 class Controller:
     def __init__(self, board):
@@ -14,6 +15,7 @@ class Controller:
         self.reference = None
         self.tracks = []
         self.vias = []
+        self.packages = get_packages()
         self.logger = self.init_logger(self.view.textLog)
         self.model = Model(self.board, self.logger)
 
@@ -25,6 +27,7 @@ class Controller:
         
         self.add_references()
         self.get_tracks_vias()
+        self.set_package()
 
     def Show(self):
         self.view.Show()
@@ -109,6 +112,18 @@ class Controller:
         self.view.AddTracksWidth(tracklist)
         self.view.AddViasSize(vialist)
         self.logger.info('get_design_settings')
+
+    def set_package(self):
+        default = 2 #bga
+        packages = []
+        alignments = []
+        for package in self.packages:
+            packages.append(package.name)
+            if package.name == 'BGA':
+                for alig in package.alignments:
+                    alignments.append(alig.name)
+        self.view.AddPackageType(packages, default)
+        self.view.AddAlignment(alignments)
 
     def init_logger(self, texlog):
         root = logging.getLogger()

@@ -1,0 +1,65 @@
+package:
+- name: SOIC
+  alignment:
+  - name: Aligned, multiple rows
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+  - name: Alternate, multiple rows
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+  - name: Aligned, single row
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+  - name: Alternate, single row
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+- name: QUAD
+  alignment:
+  - name: Aligned, multiple rows
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+  - name: Alternate, multiple rows
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+  - name: Aligned, single row
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+  - name: Alternate, single row
+    direction:
+    - Inside
+    - Outside
+    - Both sides
+- name: BGA
+  alignment:
+  - name: Quadrant
+    direction: []
+  - name: Diagonal
+    direction:
+    - TopLeft
+    - TopRight
+    - BottomLeft
+    - BottomRight
+  - name: X-pattern
+    direction:
+    - Counterclock
+    - Counterclockwise
+- name: BGA staggered
+  alignment:
+  - name: noname
+    direction:
+    - Horizontal
+    - Vertical

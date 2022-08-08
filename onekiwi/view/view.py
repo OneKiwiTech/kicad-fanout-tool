@@ -26,3 +26,11 @@ class FanoutView(FanoutDialog):
 
     def GetViaSelectedIndex(self):
         return self.choiceVia.GetSelection()
+
+    def AddPackageType(self, items, index):
+        self.choicePackage.Append(items)
+        self.choicePackage.SetSelection(index)
+    
+    def AddAlignment(self, items):
+        self.choiceAlignment.Append(items)
+        self.choiceAlignment.SetSelection(0)
