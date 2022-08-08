@@ -4,7 +4,7 @@ from onekiwi.controller.controller import Controller
 
 filename = '/home/vanson/working/kicad/radio-4g-imx-rt1052/iMXRT1052_Thatico.kicad_pcb'
 
-class SimplePluginApp(wx.App):
+class PluginApp(wx.App):
     def OnInit(self):
         board = pcbnew.LoadBoard(filename)
         controller = Controller(board)
@@ -12,7 +12,7 @@ class SimplePluginApp(wx.App):
         return True
 
 def main():
-    app = SimplePluginApp()
+    app = PluginApp()
     app.MainLoop()
 
     print("Done")
