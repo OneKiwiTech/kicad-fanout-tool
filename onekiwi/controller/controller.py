@@ -1,4 +1,3 @@
-from ..kicad.board import get_image_path
 from ..model.model import Model
 from ..view.view import FanoutView
 from .logtext import LogText
@@ -8,7 +7,6 @@ import logging.config
 import wx
 import pcbnew
 from .package import get_packages
-import os
 
 class Controller:
     def __init__(self, board):
@@ -33,10 +31,6 @@ class Controller:
         self.add_references()
         self.get_tracks_vias()
         self.set_package()
-
-        path = get_image_path()
-        image = os.path.join(path, 'image.svg')
-        self.view.SetImagePreview(image)
 
     def Show(self):
         self.view.Show()
@@ -87,24 +81,41 @@ class Controller:
         for i, ali in enumerate(package.alignments, 0):
             alignments.append(ali.name)
             if i == 0:
-                directions = ali.directions.copy()
+                for direc in ali.directions:
+                    directions.append(direc.name)
         self.view.ClearAlignment()
         self.view.ClearDirection()
         if value == 'BGA staggered':
             alignments.clear()
+        if value == 'BGA':
+            directions.clear()
         self.view.AddAlignment(alignments)
         self.view.AddDirection(directions)
+        image = self.packages[index].alignments[0].directions[0].image
+        self.view.SetImagePreview(image)
 
     def OnChoiceAlignment(self, event):
-        align_i = event.GetEventObject().GetSelection()
-        pack_i = self.view.GetPackageIndex()
-        directions = self.packages[pack_i].alignments[align_i].directions
+        x = self.view.GetPackageIndex()
+        y = self.view.GetAlignmentIndex()
+        value = self.view.GetAlignmentValue()
+        directions = []
+        direcs = self.packages[x].alignments[y].directions
+        for direc in direcs:
+            directions.append(direc.name)
+        image = direcs[0].image
         self.view.ClearDirection()
+        if value == 'Quadrant':
+            directions.clear()
         self.view.AddDirection(directions)
+        self.view.SetImagePreview(image)
 
     def OnChoiceDirection(self, event):
-        index = event.GetEventObject().GetSelection()
-        value = event.GetEventObject().GetString(index)
+        x = self.view.GetPackageIndex()
+        y = self.view.GetAlignmentIndex()
+        i = event.GetEventObject().GetSelection()
+        #value = event.GetEventObject().GetString(i)
+        image = self.packages[x].alignments[y].directions[i].image
+        self.view.SetImagePreview(image)
 
     def add_references(self):
         references = []
@@ -165,6 +176,7 @@ class Controller:
                     alignments.append(alig.name)
         self.view.AddPackageType(packages, default)
         self.view.AddAlignment(alignments)
+        self.view.SetImagePreview('quadrant.svg')
 
     def init_logger(self, texlog):
         root = logging.getLogger()

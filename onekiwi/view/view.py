@@ -1,6 +1,8 @@
 import wx
 from .dialog import *
 from ..version import version
+import os
+from ..kicad.board import get_image_path
 
 class FanoutView(FanoutDialog):
     def __init__(self):
@@ -72,5 +74,7 @@ class FanoutView(FanoutDialog):
         value = self.choiceDirection.GetString(index)
         return value
     
-    def SetImagePreview(self, path):
-        self.bitmapPreview.SetBitmap(wx.Bitmap(path))
+    def SetImagePreview(self, name):
+        path = get_image_path()
+        image = os.path.join(path, name)
+        self.bitmapPreview.SetBitmap(wx.Bitmap(image))

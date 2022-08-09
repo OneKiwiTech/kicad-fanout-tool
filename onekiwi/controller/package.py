@@ -2,10 +2,15 @@ import yaml
 import os
 from typing import List
 
+class Direction:
+    def __init__(self, name, image):
+        self.name = name
+        self.image = image
+
 class Alignment:
     def __init__(self, name, directions):
         self.name = name
-        self.directions:List[str] = directions
+        self.directions:List[Direction] = directions
 
 class Package:
     def __init__(self, name):
@@ -30,7 +35,10 @@ class Packages:
             pack = Package(name)
             for alignment in package['alignment']:
                 ali = alignment['name']
-                directions = alignment['direction']
+                directions = []
+                for direction in alignment['direction']:
+                    direc = Direction(direction['name'], direction['image'])
+                    directions.append(direc)
                 align = Alignment(ali, directions)
                 pack.alignments.append(align)
             self.packages.append(pack)

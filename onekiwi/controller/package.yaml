@@ -3,63 +3,97 @@ package:
   alignment:
   - name: Aligned, multiple rows
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
   - name: Alternate, multiple rows
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
   - name: Aligned, single row
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
   - name: Alternate, single row
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
 - name: QUAD
   alignment:
   - name: Aligned, multiple rows
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
   - name: Alternate, multiple rows
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
   - name: Aligned, single row
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
   - name: Alternate, single row
     direction:
-    - Inside
-    - Outside
-    - Both sides
+    - name: Inside
+      image: inside.svg
+    - name: Outside
+      image: outside.svg
+    - name: Both sides
+      image: bothsides.svg
 - name: BGA
   alignment:
   - name: Quadrant
-    direction: []
+    direction:
+    - name: noname
+      image: quadrant.svg
   - name: Diagonal
     direction:
-    - TopLeft
-    - TopRight
-    - BottomLeft
-    - BottomRight
+    - name: TopLeft
+      image: topleft.svg
+    - name: TopRight
+      image: topright.svg
+    - name: BottomLeft
+      image: bottomleft.svg
+    - name: BottomRight
+      image: bottomright.svg
   - name: X-pattern
     direction:
-    - Counterclock
-    - Counterclockwise
+    - name: Counterclock
+      image: counterclock.svg
+    - name: Counterclockwise
+      image: counterclockwise.svg
 - name: BGA staggered
   alignment:
   - name: noname
     direction:
-    - Horizontal
-    - Vertical
+    - name: Horizontal
+      image: horizontal.svg
+    - name: Vertical
+      image: vertical.svg
