@@ -78,7 +78,7 @@ class FanoutDialog ( wx.Dialog ):
 		sbSizer6 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Preview" ), wx.VERTICAL )
 
 		self.bitmapPreview = wx.StaticBitmap( sbSizer6.GetStaticBox(), wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer6.Add( self.bitmapPreview, 0, wx.ALL|wx.EXPAND, 5 )
+		sbSizer6.Add( self.bitmapPreview, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL|wx.ALL|wx.EXPAND, 5 )
 
 
 		bSizer8.Add( sbSizer6, 1, wx.BOTTOM|wx.EXPAND|wx.LEFT, 5 )

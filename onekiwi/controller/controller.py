@@ -176,7 +176,8 @@ class Controller:
                     alignments.append(alig.name)
         self.view.AddPackageType(packages, default)
         self.view.AddAlignment(alignments)
-        self.view.SetImagePreview('quadrant.svg')
+        image = self.packages[default].alignments[0].directions[0].image
+        self.view.SetImagePreview(image)
 
     def init_logger(self, texlog):
         root = logging.getLogger()
