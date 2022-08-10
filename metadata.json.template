@@ -1,8 +1,8 @@
 {
     "$schema": "https://go.kicad.org/pcm/schemas/v1",
     "name": "Fanout Tool",
-    "description": "Edit reference value on layer Silkscreen and Fabrication",
-    "description_full": "Edit reference value on layer Silkscreen and Fabrication",
+    "description": "BGA Fanout",
+    "description_full": "BGA fanout routing",
     "identifier": "vn.onekiwi.fanout-tool",
     "type": "plugin",
     "author": {
