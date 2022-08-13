@@ -14,6 +14,7 @@
     "license": "MIT",
     "resources": {
         "homepage": "https://github.com/OneKiwiTech/kicad-fanout-tool"
+        "demo": "https://www.youtube.com/watch?v=-J81S3inhoc"
     },
     "versions": [
         {
