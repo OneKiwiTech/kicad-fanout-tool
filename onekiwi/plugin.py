@@ -2,7 +2,7 @@ import pcbnew
 import os
 from .controller.controller import Controller
 
-class LengthMatchingAction(pcbnew.ActionPlugin):
+class FanoutAction(pcbnew.ActionPlugin):
 	def defaults(self):
 		self.name = "Fanout Tools"
 		self.category = "Modify PCB"

@@ -1,2 +1,2 @@
-from .onekiwi.plugin import LengthMatchingAction # Note the relative import!
-LengthMatchingAction().register() # Instantiate and register to Pcbnew
+from .onekiwi.plugin import FanoutAction # Note the relative import!
+FanoutAction().register() # Instantiate and register to Pcbnew

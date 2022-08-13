@@ -1,4 +1,4 @@
-import yaml
+import json
 import os
 from typing import List
 
@@ -25,9 +25,10 @@ class Packages:
         self.parser_data()
     
     def read_yaml(self):
-        yaml_path = os.path.join(os.path.dirname(__file__), 'package.yaml') # Optional
+        yaml_path = os.path.join(os.path.dirname(__file__), 'package.json') # Optional
         with open(yaml_path) as f:
-            self.data = yaml.load(f, Loader=yaml.FullLoader)
+            #self.data = yaml.load(f, Loader=yaml.FullLoader)
+            self.data = json.load(f)
 
     def parser_data(self):
         for package in self.data['package']:

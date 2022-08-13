@@ -1,0 +1,216 @@
+{
+    "package": [
+        {
+            "name": "SOIC",
+            "alignment": [
+                {
+                    "name": "Aligned, multiple rows",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Alternate, multiple rows",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Aligned, single row",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Alternate, single row",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "QUAD",
+            "alignment": [
+                {
+                    "name": "Aligned, multiple rows",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Alternate, multiple rows",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Aligned, single row",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Alternate, single row",
+                    "direction": [
+                        {
+                            "name": "Inside",
+                            "image": "inside.png"
+                        },
+                        {
+                            "name": "Outside",
+                            "image": "outside.png"
+                        },
+                        {
+                            "name": "Both sides",
+                            "image": "bothsides.png"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "BGA",
+            "alignment": [
+                {
+                    "name": "Quadrant",
+                    "direction": [
+                        {
+                            "name": "noname",
+                            "image": "quadrant.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "Diagonal",
+                    "direction": [
+                        {
+                            "name": "TopLeft",
+                            "image": "topleft.png"
+                        },
+                        {
+                            "name": "TopRight",
+                            "image": "topright.png"
+                        },
+                        {
+                            "name": "BottomLeft",
+                            "image": "bottomleft.png"
+                        },
+                        {
+                            "name": "BottomRight",
+                            "image": "bottomright.png"
+                        }
+                    ]
+                },
+                {
+                    "name": "X-pattern",
+                    "direction": [
+                        {
+                            "name": "Counterclock",
+                            "image": "counterclock.png"
+                        },
+                        {
+                            "name": "Counterclockwise",
+                            "image": "counterclockwise.png"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "BGA staggered",
+            "alignment": [
+                {
+                    "name": "noname",
+                    "direction": [
+                        {
+                            "name": "Horizontal",
+                            "image": "horizontal.png"
+                        },
+                        {
+                            "name": "Vertical",
+                            "image": "vertical.png"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
