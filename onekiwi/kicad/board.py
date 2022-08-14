@@ -18,7 +18,13 @@ def get_plugin_version():
         return f.read()
 
 def get_kicad_build_version():
-    return pcbnew.GetBuildVersion()
+    return str(pcbnew.GetBuildVersion())
+
+def get_kicad_semantic_version():
+    return str(pcbnew.GetSemanticVersion())
+
+def get_kicad_major_minor_version():
+    return str(pcbnew.GetMajorMinorVersion())
 
 def get_current_unit():
     unit = pcbnew.GetUserUnits()
