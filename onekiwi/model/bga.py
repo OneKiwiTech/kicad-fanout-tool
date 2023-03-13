@@ -17,9 +17,11 @@ class BGA:
         self.logger.info(reference)
         self.radian_pad = 0.0
         self.footprint = self.board.FindFootprintByReference(reference)
-        if self.get_major_version() == '7':
+        if self.get_major_version() >= 7:
+            # KiCad v7
             self.radian = self.footprint.GetOrientation()
         else:
+            # KiCad v6
             self.radian = self.footprint.GetOrientationRadians()
         self.degrees = self.footprint.GetOrientationDegrees()
         self.pads = self.footprint.Pads()
@@ -29,16 +31,18 @@ class BGA:
     
     def get_major_version(self):
         version = str(pcbnew.Version())
-        major = version.split(".")[0]
+        major = int(version.split(".")[0])
         return major
     
     def init_data(self):
         if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
             degrees = self.degrees + 45.0
             self.footprint.SetOrientationDegrees(degrees)
-            if self.get_major_version() == '7':
+            if self.get_major_version() >= 7:
+                # KiCad v7
                 self.radian_pad = self.footprint.GetOrientation()
             else:
+                # KiCad v6
                 self.radian_pad = self.footprint.GetOrientationRadians()
             self.footprint.SetOrientationDegrees(0)
         pos_x = []
@@ -301,7 +305,7 @@ class BGA:
 
             # d^2 = (x - x0)^2 + (y - y0)^2
             #     = (x - x0)^2 + (a.x + b - y0)^2
-            #     = #x^2 - #2x.x0 + #x0^2 + #a^2.x^2 + #a.b.x - #a.y0.x + #a.b.x + #b^2 - #b.y0 - #a.y0.x - b.y0 + y0^2
+            #     = x^2 - 2x.x0 + x0^2 + a^2.x^2 + a.b.x - a.y0.x + a.b.x + b^2 - b.y0 - a.y0.x - b.y0 + y0^2
             # = (1 + a.a)x.x = (-2.x0 + 2.a.b - 2.a.y0)x + (x0.x0 + b.b - 2.b.y0 + y0.y0) - d.d
             ax = pax*pax + 1
             bx = 2*pax*pbx - 2*pos.x - 2*pax*pos.y
@@ -448,7 +452,7 @@ class BGA:
 
             # d^2 = (x - x0)^2 + (y - y0)^2
             #     = (x - x0)^2 + (a.x + b - y0)^2
-            #     = #x^2 - #2x.x0 + #x0^2 + #a^2.x^2 + #a.b.x - #a.y0.x + #a.b.x + #b^2 - #b.y0 - #a.y0.x - b.y0 + y0^2
+            #     = x^2 - 2x.x0 + x0^2 + a^2.x^2 + a.b.x - a.y0.x + a.b.x + b^2 - b.y0 - a.y0.x - b.y0 + y0^2
             # = (1 + a.a)x.x = (-2.x0 + 2.a.b - 2.a.y0)x + (x0.x0 + b.b - 2.b.y0 + y0.y0) - d.d
             ax = pax*pax + 1
             bx = 2*pax*pbx - 2*pos.x - 2*pax*pos.y
@@ -581,11 +585,12 @@ class BGA:
 
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
-        #track.SetStart(start)
-        if self.get_major_version() == '7':
+        if self.get_major_version() >= 7:
+            # KiCad v7
             track.SetStart(pcbnew.VECTOR2I(start))
             track.SetEnd(pcbnew.VECTOR2I(end))
         else:
+            # KiCad v7
             track.SetStart(start)
             track.SetEnd(end)
         track.SetWidth(self.track)
@@ -597,9 +602,11 @@ class BGA:
     def add_via(self, net, pos):
         via = pcbnew.PCB_VIA(self.board)
         via.SetViaType(pcbnew.VIATYPE_THROUGH)
-        if self.get_major_version() == '7':
+        if self.get_major_version() >= 7:
+            # KiCad v7
             via.SetPosition(pcbnew.VECTOR2I(pos))
         else:
+            # KiCad v6
             via.SetPosition(pos)
         via.SetWidth(int(self.via.m_Diameter))
         via.SetDrill(self.via.m_Drill)

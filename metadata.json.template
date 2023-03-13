@@ -20,7 +20,7 @@
         {
             "version": "VERSION",
             "status": "stable",
-            "kicad_version": "6.0",
+            "kicad_version": "7.0",
             "download_sha256": "SHA256",
             "download_size": DOWNLOAD_SIZE,
             "download_url": "https://github.com/OneKiwiTech/kicad-fanout-tool/releases/download/VERSION/fanout-tool-VERSION.zip",

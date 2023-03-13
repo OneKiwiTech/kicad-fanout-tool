@@ -1,6 +1,8 @@
-# Fanout Tool
-![screenshot](icon/icon_256x256.png)  
-BGA Fanout
+# ![icon](onekiwi/icon.png) Fanout Tool
+
+***
+<img src="https://img.shields.io/badge/KiCad-v6-brightgreen?style=flat&logo=KiCad" height="30px"/> <img src="https://img.shields.io/badge/KiCad-v7-brightgreen?style=flat&logo=KiCad" height="30px"/>
+***
 
 ## GUI
 ![screenshot](doc/fanout_tool.png)
