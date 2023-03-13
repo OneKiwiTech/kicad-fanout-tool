@@ -1,6 +1,10 @@
 import pcbnew
 import math
 
+
+M_PI = 3.1415926535897932384626433832795
+
+
 class BGA:
     def __init__(self, board, reference, track, via, alignment, direction, logger):
         self.logger = logger
@@ -17,8 +21,8 @@ class BGA:
         self.logger.info(reference)
         self.radian_pad = 0.0
         self.footprint = self.board.FindFootprintByReference(reference)
-        self.radian = self.footprint.GetOrientationRadians()
-        self.degrees = self.footprint.GetOrientationDegrees()
+        self.radian = self.footprint.GetOrientation().AsRadians()
+        self.degrees = self.footprint.GetOrientation().AsDegrees()
         self.pads = self.footprint.Pads()
         self.x0 = self.footprint.GetPosition().x
         self.y0 = self.footprint.GetPosition().y
@@ -28,7 +32,7 @@ class BGA:
         if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
             degrees = self.degrees + 45.0
             self.footprint.SetOrientationDegrees(degrees)
-            self.radian_pad = self.footprint.GetOrientationRadians()
+            self.radian_pad = self.footprint.GetOrientation().AsRadians()
             self.footprint.SetOrientationDegrees(0)
         pos_x = []
         pos_y = []
@@ -89,95 +93,7 @@ class BGA:
                         self.pitchy = pitch
         self.logger.info('pitch x: %d' %self.pitchx)
         self.logger.info('pitch y: %d' %self.pitchy)
-        """
-        for ind, arrs in enumerate(pos_y):
-            self.logger.info('%d. sort---------------------' %ind)
-            for i, arr in enumerate(arrs):
-                self.logger.info('%d. %s' %(i, str(arr)))
-        """
         self.footprint.SetOrientationDegrees(self.degrees)
-        """
-        if self.degrees in [0.0 , 90.0, 180.0, -90]:
-            x = (minx + maxx)/2
-            y = (miny + maxy)/2
-            xstart = pcbnew.wxPoint(x, maxy)
-            xend = pcbnew.wxPoint(x, miny)
-            ystart = pcbnew.wxPoint(minx, y)
-            yend = pcbnew.wxPoint(maxx, y)
-            xtrack = pcbnew.PCB_TRACK(self.board)
-            xtrack.SetStart(xstart)
-            xtrack.SetEnd(xend)
-            xtrack.SetWidth(self.track)
-            xtrack.SetLayer(pcbnew.F_Cu)
-            self.board.Add(xtrack)
-
-            ytrack = pcbnew.PCB_TRACK(self.board)
-            ytrack.SetStart(ystart)
-            ytrack.SetEnd(yend)
-            ytrack.SetWidth(self.track)
-            ytrack.SetLayer(pcbnew.F_Cu)
-            self.board.Add(ytrack)
-        else:
-            anphalx = (-1)*math.tan(self.radian)
-            anphaly = 1/math.tan(self.radian)
-            bx = self.y0 - anphalx*self.x0
-            by = self.y0 - anphaly*self.x0
-
-            # y = ax + b
-            xyminx = anphalx*minx + bx
-            xymaxx = anphalx*maxx + bx
-            xstart = pcbnew.wxPoint(minx, xyminx)
-            xend = pcbnew.wxPoint(maxx, xymaxx)
-
-            yyminx = anphaly*minx + by
-            yymaxx = anphaly*maxx + by
-            ystart = pcbnew.wxPoint(minx, yyminx)
-            yend = pcbnew.wxPoint(maxx, yymaxx)
-
-            xtrack = pcbnew.PCB_TRACK(self.board)
-            xtrack.SetStart(xstart)
-            xtrack.SetEnd(xend)
-            xtrack.SetWidth(self.track)
-            xtrack.SetLayer(pcbnew.F_Cu)
-            self.board.Add(xtrack)
-
-            ytrack = pcbnew.PCB_TRACK(self.board)
-            ytrack.SetStart(ystart)
-            ytrack.SetEnd(yend)
-            ytrack.SetWidth(self.track)
-            ytrack.SetLayer(pcbnew.F_Cu)
-            self.board.Add(ytrack)
-            #######
-            anx = -1*math.tan(self.radian_pad)
-            any = 1/math.tan(self.radian_pad)
-            b1 = self.y0 - anx*self.x0
-            b2 = self.y0 - any*self.x0
-            y1 = anx*minx + b1
-            y2 = anx*maxx + b1
-
-            y3 = any*minx + b2
-            y4 = any*maxx + b2
-            start1 = pcbnew.wxPoint(minx, y1)
-            end1 = pcbnew.wxPoint(maxx, y2)
-
-            start2 = pcbnew.wxPoint(minx, y3)
-            end2 = pcbnew.wxPoint(maxx, y4)
-
-            track1 = pcbnew.PCB_TRACK(self.board)
-            track1.SetStart(start1)
-            track1.SetEnd(end1)
-            track1.SetWidth(self.track)
-            track1.SetLayer(pcbnew.F_Cu)
-            self.board.Add(track1)
-
-            track2 = pcbnew.PCB_TRACK(self.board)
-            track2.SetStart(start2)
-            track2.SetEnd(end2)
-            track2.SetWidth(self.track)
-            track2.SetLayer(pcbnew.F_Cu)
-            self.board.Add(track2)
-        pcbnew.Refresh()
-        """
         
     def fanout(self):
         if self.alignment == 'Quadrant':
@@ -565,10 +481,57 @@ class BGA:
             self.add_track(net, pos, end)
             self.add_via(net, end)
 
+    def xpattern_other_angle(self):
+        # WIP, needs to place the pads at the right position so the tracks form the angle aligned with the footprint
+        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        for pad in self.pads:
+            pos = pad.GetPosition()
+            net = pad.GetNetCode()
+            x = 0
+            y = 0
+            if pos.y > self.y0:
+                if pos.x > self.x0:
+                    #bottom-right
+                    if self.direction =='Counterclock':
+                        x = pos.x
+                        y = pos.y + pitch
+                    if self.direction =='Counterclockwise':
+                        x = pos.x + pitch
+                        y = pos.y
+                else:
+                    #bottom-left
+                    if self.direction =='Counterclock':
+                        x = pos.x - pitch
+                        y = pos.y
+                    if self.direction =='Counterclockwise':
+                        x = pos.x
+                        y = pos.y + pitch
+            else:
+                if pos.x > self.x0:
+                    #bottom-right
+                    if self.direction =='Counterclock':
+                        x = pos.x + pitch
+                        y = pos.y
+                    if self.direction =='Counterclockwise':
+                        x = pos.x
+                        y = pos.y - pitch
+                else:
+                    #bottom-left
+                    if self.direction =='Counterclock':
+                        x = pos.x
+                        y = pos.y - pitch
+                    if self.direction =='Counterclockwise':
+                        x = pos.x - pitch
+                        y = pos.y
+                    
+            end = pcbnew.wxPoint(x, y)
+            self.add_track(net, pos, end)
+            self.add_via(net, end)
+
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
         track.SetStart(start)
-        track.SetEnd(end)
+        track.SetEnd(pcbnew.VECTOR2I(end))
         track.SetWidth(self.track)
         track.SetLayer(pcbnew.F_Cu)
         track.SetNetCode(net)
@@ -578,7 +541,7 @@ class BGA:
     def add_via(self, net, pos):
         via = pcbnew.PCB_VIA(self.board)
         via.SetViaType(pcbnew.VIATYPE_THROUGH)
-        via.SetPosition(pos)
+        via.SetPosition(pcbnew.VECTOR2I(pos))
         via.SetWidth(int(self.via.m_Diameter))
         via.SetDrill(self.via.m_Drill)
         via.SetNetCode(net)

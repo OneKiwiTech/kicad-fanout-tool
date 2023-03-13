@@ -59,6 +59,7 @@ class Controller:
         package = self.view.GetPackageValue()
         alignment = self.view.GetAlignmentValue()
         direction = self.view.GetDirectionValue()
+        self.logger.info(f"Package: {package}, Alignment: {alignment}, Direction: {direction}")
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
         self.model.update_package(package, alignment, direction)
         self.model.fanout()
