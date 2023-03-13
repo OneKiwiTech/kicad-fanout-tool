@@ -1,10 +1,6 @@
 import pcbnew
 import math
 
-
-M_PI = 3.1415926535897932384626433832795
-
-
 class BGA:
     def __init__(self, board, reference, track, via, alignment, direction, logger):
         self.logger = logger
@@ -482,51 +478,8 @@ class BGA:
             self.add_via(net, end)
 
     def xpattern_other_angle(self):
-        # WIP, needs to place the pads at the right position so the tracks form the angle aligned with the footprint
-        pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
-        for pad in self.pads:
-            pos = pad.GetPosition()
-            net = pad.GetNetCode()
-            x = 0
-            y = 0
-            if pos.y > self.y0:
-                if pos.x > self.x0:
-                    #bottom-right
-                    if self.direction =='Counterclock':
-                        x = pos.x
-                        y = pos.y + pitch
-                    if self.direction =='Counterclockwise':
-                        x = pos.x + pitch
-                        y = pos.y
-                else:
-                    #bottom-left
-                    if self.direction =='Counterclock':
-                        x = pos.x - pitch
-                        y = pos.y
-                    if self.direction =='Counterclockwise':
-                        x = pos.x
-                        y = pos.y + pitch
-            else:
-                if pos.x > self.x0:
-                    #bottom-right
-                    if self.direction =='Counterclock':
-                        x = pos.x + pitch
-                        y = pos.y
-                    if self.direction =='Counterclockwise':
-                        x = pos.x
-                        y = pos.y - pitch
-                else:
-                    #bottom-left
-                    if self.direction =='Counterclock':
-                        x = pos.x
-                        y = pos.y - pitch
-                    if self.direction =='Counterclockwise':
-                        x = pos.x - pitch
-                        y = pos.y
-                    
-            end = pcbnew.wxPoint(x, y)
-            self.add_track(net, pos, end)
-            self.add_via(net, end)
+        # TODO, not implemented
+        self.logger.error('X pattern for arbitrary angles not implemented yet, use 45, 90, 135, 180 instead')
 
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)

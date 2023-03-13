@@ -59,7 +59,6 @@ class Controller:
         package = self.view.GetPackageValue()
         alignment = self.view.GetAlignmentValue()
         direction = self.view.GetDirectionValue()
-        self.logger.info(f"Package: {package}, Alignment: {alignment}, Direction: {direction}")
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
         self.model.update_package(package, alignment, direction)
         self.model.fanout()
@@ -164,7 +163,6 @@ class Controller:
                 vialist.append(display)
         self.view.AddTracksWidth(tracklist)
         self.view.AddViasSize(vialist)
-        self.logger.info('get_design_settings')
 
     def set_package(self):
         default = 2 #bga

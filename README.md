@@ -7,7 +7,12 @@ BGA Fanout
 
 ## Installation 💾
 
-// TODO
+Add our custom repo to **the Plugin and Content Manager**, the URL is `https://raw.githubusercontent.com/OneKiwiTech/onekiwi-kicad-repository/main/repository.json`
+
+![pcm](doc/pcm.png)
+
+From there you can install the plugin via the GUI.
+
 
 ## Demo Video
 [![Watch the video](https://img.youtube.com/vi/-J81S3inhoc/sddefault.jpg)](https://youtu.be/-J81S3inhoc)
