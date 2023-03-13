@@ -7,12 +7,20 @@ class Model:
         self.logger = logger
         self.unit = get_current_unit()
         self.board = board
+        self.references = []
         self.reference = None
         self.track = None
         self.via = None
         self.package = None
         self.alignment = None
         self.direction = None
+        self.update_reference()
+
+    def update_reference(self):
+        footprints = self.board.GetFootprints()
+        for footprint in footprints:
+            ref = str(footprint.GetReference())
+            self.references.append(ref)
 
     def update_data(self, reference, track, via):
         self.reference = reference

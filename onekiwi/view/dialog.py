@@ -9,7 +9,7 @@
 
 import wx
 import wx.xrc
-from .combofilter import FilterCombo
+
 ###########################################################################
 ## Class FanoutDialog
 ###########################################################################
@@ -23,8 +23,6 @@ class FanoutDialog ( wx.Dialog ):
 
 		bSizer1 = wx.BoxSizer( wx.VERTICAL )
 
-		bSizer4 = wx.BoxSizer( wx.HORIZONTAL )
-
 		bSizer5 = wx.BoxSizer( wx.VERTICAL )
 
 		bSizer8 = wx.BoxSizer( wx.HORIZONTAL )
@@ -32,8 +30,16 @@ class FanoutDialog ( wx.Dialog ):
 		sbSizer5 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Create fanouts" ), wx.VERTICAL )
 
 		fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
-		fgSizer1.SetFlexibleDirection( wx.BOTH )
+		fgSizer1.SetFlexibleDirection( wx.VERTICAL )
 		fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.textFilttter = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Filtter:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textFilttter.Wrap( -1 )
+
+		fgSizer1.Add( self.textFilttter, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+
+		self.editFiltter = wx.TextCtrl( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		fgSizer1.Add( self.editFiltter, 0, wx.ALL|wx.EXPAND, 5 )
 
 		self.textReference = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Reference:", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textReference.Wrap( -1 )
@@ -41,10 +47,9 @@ class FanoutDialog ( wx.Dialog ):
 		fgSizer1.Add( self.textReference, 0, wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		choiceReferenceChoices = []
-		#self.choiceReference = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceReferenceChoices, 0 )
-		#self.choiceReference.SetSelection( 0 )
-		self.choiceReference = FilterCombo(sbSizer5.GetStaticBox(), -1, choiceReferenceChoices, style = wx.CB_DROPDOWN|wx.CB_READONLY)
-		fgSizer1.Add( self.choiceReference, 0, wx.ALL|wx.EXPAND, 5 )
+		self.choiceReference = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceReferenceChoices, 0 )
+		self.choiceReference.SetSelection( 0 )
+		fgSizer1.Add( self.choiceReference, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.textTrack = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Track width:", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textTrack.Wrap( -1 )
@@ -54,7 +59,7 @@ class FanoutDialog ( wx.Dialog ):
 		choiceTrackChoices = []
 		self.choiceTrack = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceTrackChoices, 0 )
 		self.choiceTrack.SetSelection( 0 )
-		fgSizer1.Add( self.choiceTrack, 0, wx.ALL|wx.EXPAND, 5 )
+		fgSizer1.Add( self.choiceTrack, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.textVia = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Via size:", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textVia.Wrap( -1 )
@@ -64,7 +69,7 @@ class FanoutDialog ( wx.Dialog ):
 		choiceViaChoices = []
 		self.choiceVia = wx.Choice( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, choiceViaChoices, 0 )
 		self.choiceVia.SetSelection( 0 )
-		fgSizer1.Add( self.choiceVia, 0, wx.ALL|wx.EXPAND, 5 )
+		fgSizer1.Add( self.choiceVia, 1, wx.ALL|wx.EXPAND, 5 )
 
 
 		sbSizer5.Add( fgSizer1, 1, wx.EXPAND, 5 )
@@ -73,15 +78,15 @@ class FanoutDialog ( wx.Dialog ):
 		sbSizer5.Add( self.checkUnusepad, 0, wx.ALL, 5 )
 
 
-		bSizer8.Add( sbSizer5, 1, wx.BOTTOM|wx.EXPAND|wx.RIGHT, 5 )
+		bSizer8.Add( sbSizer5, 3, wx.BOTTOM|wx.EXPAND|wx.RIGHT, 5 )
 
 		sbSizer6 = wx.StaticBoxSizer( wx.StaticBox( self, wx.ID_ANY, u"Preview" ), wx.VERTICAL )
 
 		self.bitmapPreview = wx.StaticBitmap( sbSizer6.GetStaticBox(), wx.ID_ANY, wx.NullBitmap, wx.DefaultPosition, wx.DefaultSize, 0 )
-		sbSizer6.Add( self.bitmapPreview, 1, wx.ALIGN_CENTER_HORIZONTAL|wx.ALIGN_CENTER_VERTICAL|wx.ALL|wx.EXPAND, 5 )
+		sbSizer6.Add( self.bitmapPreview, 0, wx.ALL|wx.EXPAND, 5 )
 
 
-		bSizer8.Add( sbSizer6, 1, wx.BOTTOM|wx.EXPAND|wx.LEFT, 5 )
+		bSizer8.Add( sbSizer6, 2, wx.BOTTOM|wx.EXPAND|wx.LEFT, 5 )
 
 
 		bSizer5.Add( bSizer8, 1, wx.EXPAND, 5 )
@@ -186,27 +191,27 @@ class FanoutDialog ( wx.Dialog ):
 		bSizer5.Add( sbSizer8, 0, wx.EXPAND|wx.TOP, 5 )
 
 
-		bSizer4.Add( bSizer5, 1, wx.ALL|wx.EXPAND, 5 )
+		bSizer1.Add( bSizer5, 1, wx.ALL|wx.EXPAND, 5 )
 
-		bSizer7 = wx.BoxSizer( wx.VERTICAL )
+		bSizer7 = wx.BoxSizer( wx.HORIZONTAL )
 
 		self.buttonFanout = wx.Button( self, wx.ID_ANY, u"Fanout", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.buttonFanout, 0, wx.ALL|wx.EXPAND, 5 )
+		bSizer7.Add( self.buttonFanout, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.buttonUndo = wx.Button( self, wx.ID_ANY, u"Undo", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.buttonUndo, 0, wx.ALL|wx.EXPAND, 5 )
+		bSizer7.Add( self.buttonUndo, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.buttonClear = wx.Button( self, wx.ID_ANY, u"Clear log", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.buttonClear, 0, wx.ALL|wx.EXPAND, 5 )
+		bSizer7.Add( self.buttonClear, 1, wx.ALL|wx.EXPAND, 5 )
 
 		self.buttonClose = wx.Button( self, wx.ID_ANY, u"Close", wx.DefaultPosition, wx.DefaultSize, 0 )
-		bSizer7.Add( self.buttonClose, 0, wx.ALL|wx.EXPAND, 5 )
+		bSizer7.Add( self.buttonClose, 1, wx.ALL|wx.EXPAND, 5 )
 
 
-		bSizer4.Add( bSizer7, 0, wx.EXPAND, 5 )
+		bSizer1.Add( bSizer7, 0, wx.EXPAND, 5 )
 
-
-		bSizer1.Add( bSizer4, 1, wx.ALL|wx.EXPAND, 5 )
+		self.staticLine = wx.StaticLine( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.LI_HORIZONTAL )
+		bSizer1.Add( self.staticLine, 0, wx.EXPAND |wx.ALL, 5 )
 
 		self.textLog = wx.TextCtrl( self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( -1,100 ), wx.HSCROLL|wx.TE_MULTILINE|wx.TE_READONLY )
 		bSizer1.Add( self.textLog, 0, wx.ALL|wx.EXPAND, 5 )

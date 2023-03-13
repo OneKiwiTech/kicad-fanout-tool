@@ -27,6 +27,7 @@ class Controller:
         self.view.choicePackage.Bind( wx.EVT_CHOICE, self.OnChoicePackage)
         self.view.choiceAlignment.Bind( wx.EVT_CHOICE, self.OnChoiceAlignment)
         self.view.choiceDirection.Bind( wx.EVT_CHOICE, self.OnChoiceDirection)
+        self.view.editFiltter.Bind(wx.EVT_TEXT, self.OnFiltterChange)
         
         self.add_references()
         self.get_tracks_vias()
@@ -57,8 +58,14 @@ class Controller:
             self.logger.error('Please add via')
             return
         package = self.view.GetPackageValue()
+        self.logger.info('package: %s' %package)
         alignment = self.view.GetAlignmentValue()
-        direction = self.view.GetDirectionValue()
+        self.logger.info('alignment: %s' %alignment)
+        if package == 'BGA' and alignment == 'Quadrant':
+            direction = 'none'
+        else:
+            direction = self.view.GetDirectionValue()
+        self.logger.info('direction: %s' %direction)
         self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
         self.model.update_package(package, alignment, direction)
         self.model.fanout()
@@ -117,13 +124,18 @@ class Controller:
         image = self.packages[x].alignments[y].directions[i].image
         self.view.SetImagePreview(image)
 
+    def OnFiltterChange(self, event):
+        self.logger.info('OnFiltterChange')
+        value = event.GetEventObject().GetValue()
+        self.logger.info('text: %s' %value)
+        self.view.ClearReferences()
+        for ref in self.model.references:
+            if ref.rfind(value) != -1:
+                self.view.AddReferences(ref)
+        self.view.SetIndexReferences(0)
+
     def add_references(self):
-        references = []
-        footprints = self.board.GetFootprints()
-        for footprint in footprints:
-            ref = str(footprint.GetReference())
-            references.append(ref)
-        self.view.AddReferences(references)
+        self.view.AddReferences(self.model.references)
 
     def get_tracks_vias(self):
         units = pcbnew.GetUserUnits()

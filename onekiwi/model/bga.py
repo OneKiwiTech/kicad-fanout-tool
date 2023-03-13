@@ -17,7 +17,8 @@ class BGA:
         self.logger.info(reference)
         self.radian_pad = 0.0
         self.footprint = self.board.FindFootprintByReference(reference)
-        self.radian = self.footprint.GetOrientationRadians()
+        self.radian = self.footprint.GetOrientation()
+        #self.radian = self.footprint.GetOrientationRadians()
         self.degrees = self.footprint.GetOrientationDegrees()
         self.pads = self.footprint.Pads()
         self.x0 = self.footprint.GetPosition().x
@@ -28,7 +29,8 @@ class BGA:
         if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
             degrees = self.degrees + 45.0
             self.footprint.SetOrientationDegrees(degrees)
-            self.radian_pad = self.footprint.GetOrientationRadians()
+            self.radian_pad = self.footprint.GetOrientation()
+            #self.radian_pad = self.footprint.GetOrientationRadians()
             self.footprint.SetOrientationDegrees(0)
         pos_x = []
         pos_y = []
@@ -87,8 +89,11 @@ class BGA:
                     pitch = arrs[i].y - arrs[i-1].y
                     if pitch > 0 and pitch < self.pitchy:
                         self.pitchy = pitch
-        self.logger.info('pitch x: %d' %self.pitchx)
-        self.logger.info('pitch y: %d' %self.pitchy)
+        IU_PER_MM = 1000000
+        px = round(self.pitchx/IU_PER_MM, 4)
+        py = round(self.pitchy/IU_PER_MM, 4)
+        self.logger.info('pitch x: %f mm' %px)
+        self.logger.info('pitch y: %f mm' %py)
         """
         for ind, arrs in enumerate(pos_y):
             self.logger.info('%d. sort---------------------' %ind)
@@ -568,7 +573,8 @@ class BGA:
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
         track.SetStart(start)
-        track.SetEnd(end)
+        #track.SetEnd(end)
+        track.SetEnd(pcbnew.VECTOR2I(end))
         track.SetWidth(self.track)
         track.SetLayer(pcbnew.F_Cu)
         track.SetNetCode(net)
@@ -578,7 +584,8 @@ class BGA:
     def add_via(self, net, pos):
         via = pcbnew.PCB_VIA(self.board)
         via.SetViaType(pcbnew.VIATYPE_THROUGH)
-        via.SetPosition(pos)
+        #via.SetPosition(pos)
+        via.SetPosition(pcbnew.VECTOR2I(pos))
         via.SetWidth(int(self.via.m_Diameter))
         via.SetDrill(self.via.m_Drill)
         via.SetNetCode(net)

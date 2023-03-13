@@ -10,10 +10,18 @@ class FanoutView(FanoutDialog):
         self.SetTitle('Fanout Tool v%s' % version)
     
     def AddReferences(self, references):
-        self.choiceReference.AddList(references)
+        self.choiceReference.Append(references)
+
+    def SetIndexReferences(self, index):
+        self.choiceReference.SetSelection(index)
+
+    def ClearReferences(self):
+        self.choiceReference.Clear()
 
     def GetReferenceSelected(self):
-        return self.choiceReference.GetCategoryValues()
+        index = self.choiceReference.GetSelection()
+        value = self.choiceReference.GetString(index)
+        return value
 
     def AddTracksWidth(self, tracks):
         self.choiceTrack.Append(tracks)
@@ -71,6 +79,7 @@ class FanoutView(FanoutDialog):
     
     def GetDirectionValue(self):
         index = self.choiceDirection.GetSelection()
+        print(index)
         value = self.choiceDirection.GetString(index)
         return value
     
