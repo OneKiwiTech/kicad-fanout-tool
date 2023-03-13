@@ -2,7 +2,7 @@
 import os
 import subprocess
 
-LAST_TAG = '2022.08.13'
+LAST_TAG = '1.1.0'
 
 def _get_git_version():
     plugin_path = os.path.realpath(os.path.dirname(__file__))

@@ -17,20 +17,29 @@ class BGA:
         self.logger.info(reference)
         self.radian_pad = 0.0
         self.footprint = self.board.FindFootprintByReference(reference)
-        self.radian = self.footprint.GetOrientation()
-        #self.radian = self.footprint.GetOrientationRadians()
+        if self.get_major_version() == '7':
+            self.radian = self.footprint.GetOrientation()
+        else:
+            self.radian = self.footprint.GetOrientationRadians()
         self.degrees = self.footprint.GetOrientationDegrees()
         self.pads = self.footprint.Pads()
         self.x0 = self.footprint.GetPosition().x
         self.y0 = self.footprint.GetPosition().y
         self.init_data()
     
+    def get_major_version(self):
+        version = str(pcbnew.Version())
+        major = version.split(".")[0]
+        return major
+    
     def init_data(self):
         if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
             degrees = self.degrees + 45.0
             self.footprint.SetOrientationDegrees(degrees)
-            self.radian_pad = self.footprint.GetOrientation()
-            #self.radian_pad = self.footprint.GetOrientationRadians()
+            if self.get_major_version() == '7':
+                self.radian_pad = self.footprint.GetOrientation()
+            else:
+                self.radian_pad = self.footprint.GetOrientationRadians()
             self.footprint.SetOrientationDegrees(0)
         pos_x = []
         pos_y = []
@@ -572,9 +581,13 @@ class BGA:
 
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
-        track.SetStart(start)
-        #track.SetEnd(end)
-        track.SetEnd(pcbnew.VECTOR2I(end))
+        #track.SetStart(start)
+        if self.get_major_version() == '7':
+            track.SetStart(pcbnew.VECTOR2I(start))
+            track.SetEnd(pcbnew.VECTOR2I(end))
+        else:
+            track.SetStart(start)
+            track.SetEnd(end)
         track.SetWidth(self.track)
         track.SetLayer(pcbnew.F_Cu)
         track.SetNetCode(net)
@@ -584,8 +597,10 @@ class BGA:
     def add_via(self, net, pos):
         via = pcbnew.PCB_VIA(self.board)
         via.SetViaType(pcbnew.VIATYPE_THROUGH)
-        #via.SetPosition(pos)
-        via.SetPosition(pcbnew.VECTOR2I(pos))
+        if self.get_major_version() == '7':
+            via.SetPosition(pcbnew.VECTOR2I(pos))
+        else:
+            via.SetPosition(pos)
         via.SetWidth(int(self.via.m_Diameter))
         via.SetDrill(self.via.m_Drill)
         via.SetNetCode(net)

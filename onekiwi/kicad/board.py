@@ -26,6 +26,12 @@ def get_kicad_semantic_version():
 def get_kicad_major_minor_version():
     return str(pcbnew.GetMajorMinorVersion())
 
+def get_kicad_version():
+    version = str(pcbnew.Version())
+    major = version.split(".")[0]
+    minor = version.split(".")[1]
+    patch = version.split(".")[2]
+
 def get_current_unit():
     unit = pcbnew.GetUserUnits()
     # pcbnew.EDA_UNITS_INCHES = 0
