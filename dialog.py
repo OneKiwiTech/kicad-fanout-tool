@@ -1,8 +1,14 @@
+try:
+    import pcbnew
+except:
+    import sys
+    sys.path.insert(0,"/usr/lib/python3.8/site-packages/")
+    import pcbnew
 import wx
-import pcbnew
+
 from onekiwi.controller.controller import Controller
 
-filename = '/home/vanson/working/kicad/thatico/radio-4g-stm32mp1xxaa/radio-4g-stm32mp15xxaa.kicad_pcb'
+filename = '/home/vanson/working/kicad/onekiwi/som-imx8qxp-fbga609/som-imx8qxp-fbga609.kicad_pcb'
 
 class SimplePluginApp(wx.App):
     def OnInit(self):

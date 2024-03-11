@@ -8,15 +8,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 },
@@ -25,15 +25,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 },
@@ -42,15 +42,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 },
@@ -59,15 +59,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 }
@@ -81,15 +81,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 },
@@ -98,15 +98,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 },
@@ -115,15 +115,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 },
@@ -132,15 +132,15 @@
                     "direction": [
                         {
                             "name": "Inside",
-                            "image": "inside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Outside",
-                            "image": "outside.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Both sides",
-                            "image": "bothsides.png"
+                            "image": "coming.png"
                         }
                     ]
                 }
@@ -202,11 +202,11 @@
                     "direction": [
                         {
                             "name": "Horizontal",
-                            "image": "horizontal.png"
+                            "image": "coming.png"
                         },
                         {
                             "name": "Vertical",
-                            "image": "vertical.png"
+                            "image": "coming.png"
                         }
                     ]
                 }

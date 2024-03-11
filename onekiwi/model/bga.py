@@ -17,12 +17,7 @@ class BGA:
         self.logger.info(reference)
         self.radian_pad = 0.0
         self.footprint = self.board.FindFootprintByReference(reference)
-        if self.get_major_version() >= 7:
-            # KiCad v7
-            self.radian = self.footprint.GetOrientation()
-        else:
-            # KiCad v6
-            self.radian = self.footprint.GetOrientationRadians()
+        self.radian = self.footprint.GetOrientation()
         self.degrees = self.footprint.GetOrientationDegrees()
         self.pads = self.footprint.Pads()
         self.x0 = self.footprint.GetPosition().x
@@ -38,12 +33,7 @@ class BGA:
         if self.degrees not in [0.0 , 90.0, 180.0, -90.0]:
             degrees = self.degrees + 45.0
             self.footprint.SetOrientationDegrees(degrees)
-            if self.get_major_version() >= 7:
-                # KiCad v7
-                self.radian_pad = self.footprint.GetOrientation()
-            else:
-                # KiCad v6
-                self.radian_pad = self.footprint.GetOrientationRadians()
+            self.radian_pad = self.footprint.GetOrientation()
             self.footprint.SetOrientationDegrees(0)
         pos_x = []
         pos_y = []
@@ -236,7 +226,8 @@ class BGA:
                     # bottom-left 135
                     x = pos.x - self.pitchx/2
                     y = pos.y + self.pitchy/2
-                end = pcbnew.wxPoint(x, y)
+                point = pcbnew.wxPoint(x, y)
+                end = pcbnew.VECTOR2I(point.x, point.y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
             else:
@@ -248,7 +239,8 @@ class BGA:
                     # top-left 45
                     x = pos.x - self.pitchx/2
                     y = pos.y - self.pitchy/2
-                end = pcbnew.wxPoint(x, y)
+                point = pcbnew.wxPoint(x, y)
+                end = pcbnew.VECTOR2I(point.x, point.y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
     
@@ -270,7 +262,9 @@ class BGA:
                     # left
                     x = pos.x + pitch
                     y = pos.y
-                end = pcbnew.wxPoint(x, y)
+                #end = pcbnew.wxPoint(x, y)
+                point = pcbnew.wxPoint(x, y)
+                end = pcbnew.VECTOR2I(point.x, point.y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
             else:
@@ -282,18 +276,24 @@ class BGA:
                     # top
                     x = pos.x
                     y = pos.y - pitch
-                end = pcbnew.wxPoint(x, y)
+                #end = pcbnew.wxPoint(x, y)
+                point = pcbnew.wxPoint(x, y)
+                end = pcbnew.VECTOR2I(point.x, point.y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
 
     def quadrant_other_angle(self):
-        anphalx = (-1)*math.tan(self.radian)
-        anphaly = 1/math.tan(self.radian)
+        #anphalx = (-1)*math.tan(self.radian)
+        #anphaly = 1/math.tan(self.radian)
+        anphalx = (-1)*self.radian.Tan()
+        anphaly = 1/self.radian.Tan()
         bx0 = self.y0 - anphalx*self.x0
         by0 = self.y0 - anphaly*self.x0
         
-        pax = -1*math.tan(self.radian_pad)
-        pay = 1/math.tan(self.radian_pad)
+        #pax = -1*math.tan(self.radian_pad)
+        #pay = 1/math.tan(self.radian_pad)
+        pax = -1*self.radian_pad.Tan()
+        pay = 1/self.radian_pad.Tan()
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
         for pad in self.pads:
             pos = pad.GetPosition()
@@ -362,7 +362,9 @@ class BGA:
                     elif degrees_90to180 or degrees_n90to0:
                         x = x2
                         y = pax*x + pbx
-                end = pcbnew.wxPoint(x, y)
+                #end = pcbnew.wxPoint(x, y)
+                point = pcbnew.wxPoint(x, y)
+                end = pcbnew.VECTOR2I(point.x, point.y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
             else:
@@ -390,7 +392,9 @@ class BGA:
                     elif degrees_135to180 or degrees_n45to0:
                         x = x4
                         y = pay*x + pby
-                end = pcbnew.wxPoint(x, y)
+                #end = pcbnew.wxPoint(x, y)
+                point = pcbnew.wxPoint(x, y)
+                end = pcbnew.VECTOR2I(point.x, point.y)
                 self.add_track(net, pos, end)
                 self.add_via(net, end)
 
@@ -413,7 +417,9 @@ class BGA:
             if self.direction =='BottomRight':
                 x = pos.x + self.pitchx/2
                 y = pos.y + self.pitchy/2
-            end = pcbnew.wxPoint(x, y)
+            #end = pcbnew.wxPoint(x, y)
+            point = pcbnew.wxPoint(x, y)
+            end = pcbnew.VECTOR2I(point.x, point.y)
             self.add_track(net, pos, end)
             self.add_via(net, end)
 
@@ -436,13 +442,17 @@ class BGA:
             if self.direction =='BottomRight':
                 x = pos.x
                 y = pos.y - pitch
-            end = pcbnew.wxPoint(x, y)
+            #end = pcbnew.wxPoint(x, y)
+            point = pcbnew.wxPoint(x, y)
+            end = pcbnew.VECTOR2I(point.x, point.y)
             self.add_track(net, pos, end)
             self.add_via(net, end)
 
     def diagonal_other_angle(self):
-        pax = -1*math.tan(self.radian_pad)
-        pay = 1/math.tan(self.radian_pad)
+        #pax = -1*math.tan(self.radian_pad)
+        #pay = 1/math.tan(self.radian_pad)
+        pax = (-1)*self.radian_pad.Tan()
+        pay = 1/self.radian_pad.Tan()
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
         for pad in self.pads:
             pos = pad.GetPosition()
@@ -484,7 +494,9 @@ class BGA:
             if self.direction =='BottomRight':
                 x = x3
                 y = pay*x + pby
-            end = pcbnew.wxPoint(x, y)
+            #end = pcbnew.wxPoint(x, y)
+            point = pcbnew.wxPoint(x, y)
+            end = pcbnew.VECTOR2I(point.x, point.y)
             self.add_track(net, pos, end)
             self.add_via(net, end)
 
@@ -533,7 +545,9 @@ class BGA:
                     if self.direction =='Counterclockwise':
                         x = pos.x - self.pitchx/2
                         y = pos.y - self.pitchy/2
-            end = pcbnew.wxPoint(x, y)
+            #end = pcbnew.wxPoint(x, y)
+            point = pcbnew.wxPoint(x, y)
+            end = pcbnew.VECTOR2I(point.x, point.y)
             self.add_track(net, pos, end)
             self.add_via(net, end)
     
@@ -579,20 +593,16 @@ class BGA:
                         x = pos.x - pitch
                         y = pos.y
                     
-            end = pcbnew.wxPoint(x, y)
+            #end = pcbnew.wxPoint(x, y)
+            point = pcbnew.wxPoint(x, y)
+            end = pcbnew.VECTOR2I(point.x, point.y)
             self.add_track(net, pos, end)
             self.add_via(net, end)
 
     def add_track(self, net, start, end):
         track = pcbnew.PCB_TRACK(self.board)
-        if self.get_major_version() >= 7:
-            # KiCad v7
-            track.SetStart(pcbnew.VECTOR2I(start))
-            track.SetEnd(pcbnew.VECTOR2I(end))
-        else:
-            # KiCad v7
-            track.SetStart(start)
-            track.SetEnd(end)
+        track.SetStart(start)
+        track.SetEnd(end)
         track.SetWidth(self.track)
         track.SetLayer(pcbnew.F_Cu)
         track.SetNetCode(net)

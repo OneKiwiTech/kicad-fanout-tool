@@ -94,6 +94,7 @@ class Controller:
         self.view.ClearDirection()
         if value == 'BGA staggered':
             alignments.clear()
+            self.view.AddAlignment('none')
         if value == 'BGA':
             directions.clear()
         self.view.AddAlignment(alignments)
