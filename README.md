@@ -1,6 +1,10 @@
 # ![icon](onekiwi/icon.png) Fanout Tool
 
-<img src="https://img.shields.io/badge/KiCad-v8-brightgreen?style=flat&logo=KiCad" height="30px"/>
+[![Donate](https://img.shields.io/badge/PayPal-Donate-brightgreen?style=flat&logo=PayPal)](https://paypal.me/phutruong811)
+
+
+<img src="https://img.shields.io/badge/KiCad-v8-brightgreen?style=flat&logo=KiCad">
+
 
 ## GUI
 ![screenshot](doc/fanout_tool.png)
