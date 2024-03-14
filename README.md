@@ -1,8 +1,9 @@
 # ![icon](onekiwi/icon.png) Fanout Tool
 
-[![Donate](https://img.shields.io/badge/PayPal-Donate-brightgreen?style=flat&logo=PayPal)](https://paypal.me/phutruong811)
+##
+[![Donate](https://img.shields.io/badge/PayPal-Buy%20Me%20a%20Coffee-brightgreen?style=flat&logo=PayPal)](https://paypal.me/phutruong811)
 
-
+##
 <img src="https://img.shields.io/badge/KiCad-v8-brightgreen?style=flat&logo=KiCad">
 
 
