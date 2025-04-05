@@ -17,7 +17,7 @@ import wx.xrc
 class FanoutDialog ( wx.Dialog ):
 
 	def __init__( self, parent ):
-		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Fanout Tools", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE )
+		wx.Dialog.__init__ ( self, parent, id = wx.ID_ANY, title = u"Fanout Tools", pos = wx.DefaultPosition, size = wx.DefaultSize, style = wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER )
 
 		self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
 
@@ -32,6 +32,14 @@ class FanoutDialog ( wx.Dialog ):
 		fgSizer1 = wx.FlexGridSizer( 0, 2, 0, 0 )
 		fgSizer1.SetFlexibleDirection( wx.VERTICAL )
 		fgSizer1.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.textSkip = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Skip:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.textSkip.Wrap( -1 )
+		fgSizer1.Add( self.textSkip, 0, wx.ALIGN_CENTER_VERTICAL|wx.ALL, 5 )
+		self.skip = wx.SpinCtrlDouble( sbSizer5.GetStaticBox(), wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, wx.SP_ARROW_KEYS, 0, 10000, 2, 1 )
+		self.skip.SetDigits( 0 )
+		fgSizer1.Add( self.skip, 0, wx.ALL|wx.EXPAND, 5 )
+
 
 		self.textFilttter = wx.StaticText( sbSizer5.GetStaticBox(), wx.ID_ANY, u"Filtter:", wx.DefaultPosition, wx.DefaultSize, 0 )
 		self.textFilttter.Wrap( -1 )

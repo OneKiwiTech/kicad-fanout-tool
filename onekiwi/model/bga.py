@@ -2,17 +2,21 @@ import pcbnew
 import math
 
 class BGA:
-    def __init__(self, board, reference, track, via, alignment, direction, logger):
+    def __init__(self, board, reference,skip, track, via,unused_pads, alignment, direction, logger):
         self.logger = logger
         self.board = board
         self.reference = reference
+        self.skip=skip
         self.track = track
         self.via = via
+        self.unused_pads = unused_pads
         self.alignment = alignment
         self.direction = direction
         self.pitchx = 0
         self.pitchy = 0
         self.tracks = []
+
+        self.group = pcbnew.PCB_GROUP(None)
 
         self.logger.info(reference)
         self.radian_pad = 0.0
@@ -95,8 +99,9 @@ class BGA:
         IU_PER_MM = 1000000
         px = round(self.pitchx/IU_PER_MM, 4)
         py = round(self.pitchy/IU_PER_MM, 4)
-        self.logger.info('pitch x: %f mm' %px)
-        self.logger.info('pitch y: %f mm' %py)
+        if self.logger is not None:
+            self.logger.info('pitch x: %f mm' %px)
+            self.logger.info('pitch y: %f mm' %py)
         """
         for ind, arrs in enumerate(pos_y):
             self.logger.info('%d. sort---------------------' %ind)
@@ -186,7 +191,41 @@ class BGA:
             self.board.Add(track2)
         pcbnew.Refresh()
         """
+    import math
+
+    def get_xy_extremum(self, rotation_angle=0):
+        pos_list = []
+        for pad in self.pads:
+            # 获取焊盘位置
+            position = pad.GetPosition()
+            # 计算旋转后的坐标
+            rotated_x = position.x * math.cos(rotation_angle) - position.y * math.sin(rotation_angle)
+            rotated_y = position.x * math.sin(rotation_angle) + position.y * math.cos(rotation_angle)
+            pos_list.append((rotated_x, rotated_y))  # 存储为元组
+
+        min_x = min(pos_list, key=lambda x: x[0])[0]
+        max_x = max(pos_list, key=lambda x: x[0])[0]
+        min_y = min(pos_list, key=lambda x: x[1])[1]
+        max_y = max(pos_list, key=lambda x: x[1])[1]
         
+        return min_x, max_x, min_y, max_y
+
+    def skip_pads(self, pos, min_x, max_x, min_y, max_y, pad, rotation_angle=0):
+        # 计算旋转坐标
+        rotated_x = pos.x * math.cos(rotation_angle) - pos.y * math.sin(rotation_angle)
+        rotated_y = pos.x * math.sin(rotation_angle) + pos.y * math.cos(rotation_angle)
+        
+        x_distance = min(rotated_x - min_x, max_x - rotated_x)
+        y_distance = min(rotated_y - min_y, max_y - rotated_y)
+        n_ring = min(x_distance, y_distance) / self.pitchx
+        net_name = pad.GetNet().GetNetname()
+
+        if n_ring < self.skip or (("unconnected" in net_name) and not self.unused_pads):
+            return True
+        else:
+            return False
+
+            
     def fanout(self):
         if self.alignment == 'Quadrant':
             if self.degrees in [0.0 , 90.0, 180.0, -90.0]:
@@ -214,9 +253,12 @@ class BGA:
 
     # quadrant
     def quadrant_0_90_180(self):
+        min_x, max_x, min_y, max_y = self.get_xy_extremum() 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad):
+                continue
             if pos.y > self.y0:
                 if pos.x > self.x0:
                     # bottom-right 225
@@ -248,9 +290,12 @@ class BGA:
         bx = self.y0 + self.x0
         by = self.y0 - self.x0
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        min_x, max_x, min_y, max_y = self.get_xy_extremum(45/180*math.pi) 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad, 45/180*math.pi):
+                continue
             y1 = bx - pos.x
             y2 = by + pos.x
             if pos.y > y1:
@@ -295,9 +340,13 @@ class BGA:
         pax = -1*self.radian_pad.Tan()
         pay = 1/self.radian_pad.Tan()
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        angle_radian = self.degrees/180*math.pi
+        min_x, max_x, min_y, max_y = self.get_xy_extremum(angle_radian) 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad, angle_radian):
+                continue
             y1 = anphalx*pos.x + bx0
             y2 = anphaly*pos.x + by0
             pbx = pos.y - pax*pos.x
@@ -400,9 +449,12 @@ class BGA:
 
     # diagonal
     def diagonal_0_90_180(self):
+        min_x, max_x, min_y, max_y = self.get_xy_extremum() 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad):
+                continue
             x = 0
             y = 0
             if self.direction =='TopLeft':
@@ -425,9 +477,13 @@ class BGA:
 
     def diagonal_45_135(self):
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        angle_radian = 45/180*math.pi
+        min_x, max_x, min_y, max_y = self.get_xy_extremum(angle_radian) 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad, angle_radian):
+                continue
             x = pos.x
             y = pos.y
             if self.direction =='TopLeft':
@@ -454,9 +510,13 @@ class BGA:
         pax = (-1)*self.radian_pad.Tan()
         pay = 1/self.radian_pad.Tan()
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        angle_radian = self.degrees/180*math.pi
+        min_x, max_x, min_y, max_y = self.get_xy_extremum(angle_radian) 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad, angle_radian):
+                continue
             pbx = pos.y - pax*pos.x
             pby = pos.y - pay*pos.x
 
@@ -504,9 +564,12 @@ class BGA:
     def xpattern_0_90_180(self):
         bx = self.y0 + self.x0
         by = self.y0 - self.x0
+        min_x, max_x, min_y, max_y = self.get_xy_extremum() 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad):
+                continue
             y1 = bx - pos.x
             y2 = by + pos.x
             x = 0
@@ -553,9 +616,13 @@ class BGA:
     
     def xpattern_45_135(self):
         pitch = math.sqrt(self.pitchx*self.pitchx + self.pitchy*self.pitchy)/2
+        angle_radian = 45/180*math.pi
+        min_x, max_x, min_y, max_y = self.get_xy_extremum(angle_radian) 
         for pad in self.pads:
             pos = pad.GetPosition()
             net = pad.GetNetCode()
+            if self.skip_pads(pos, min_x, max_x, min_y, max_y,pad,angle_radian):
+                continue
             x = 0
             y = 0
             if pos.y > self.y0:
@@ -608,6 +675,12 @@ class BGA:
         track.SetNetCode(net)
         self.board.Add(track)
         self.tracks.append(track)
+
+        self.group.SetName("FANOUT_TRACKS_and_VIA")
+        self.group.AddItem(track)
+        self.board.Add(self.group)
+        # self.groups.append(self.group)
+
     
     def add_via(self, net, pos):
         via = pcbnew.PCB_VIA(self.board)
@@ -623,6 +696,9 @@ class BGA:
         via.SetNetCode(net)
         self.board.Add(via)
         self.tracks.append(via)
+
+        self.group.AddItem(via)
+        self.board.Add(self.group)
 
     def remove_track_via(self):
         for item in self.tracks:

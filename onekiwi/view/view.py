@@ -8,6 +8,8 @@ class FanoutView(FanoutDialog):
     def __init__(self):
         FanoutDialog.__init__(self, None)
         self.SetTitle('Fanout Tool v%s' % version)
+    def GetSkipIndex(self):
+        return int(self.skip.GetValue())
     
     def AddReferences(self, references):
         self.choiceReference.Append(references)
@@ -22,7 +24,6 @@ class FanoutView(FanoutDialog):
         index = self.choiceReference.GetSelection()
         value = self.choiceReference.GetString(index)
         return value
-
     def AddTracksWidth(self, tracks):
         self.choiceTrack.Append(tracks)
         self.choiceTrack.SetSelection(0)
@@ -30,6 +31,8 @@ class FanoutView(FanoutDialog):
     def AddViasSize(self, vias):
         self.choiceVia.Append(vias)
         self.choiceVia.SetSelection(0)
+    def GetCheckUnusepad(self):
+        return self.checkUnusepad.GetValue()
 
     def GetTrackSelectedIndex(self):
         return self.choiceTrack.GetSelection()

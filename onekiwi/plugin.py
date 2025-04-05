@@ -16,5 +16,5 @@ class FanoutAction(pcbnew.ActionPlugin):
 		controller = Controller(board)
 		controller.Show()
 		pcbnew.UpdateUserInterface()
-
+FanoutAction().register() # Instantiate and register to Pcbnew
        
