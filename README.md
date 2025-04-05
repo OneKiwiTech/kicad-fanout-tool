@@ -4,7 +4,6 @@
 
 ##
 <img src="https://img.shields.io/badge/KiCad-v8-brightgreen?style=flat&logo=KiCad">
-![image](https://github.com/user-attachments/assets/c88cbe13-adbc-463d-a70f-aa653b1ded07)
 
 
 ## GUI
