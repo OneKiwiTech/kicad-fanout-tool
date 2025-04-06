@@ -13,6 +13,7 @@ class Controller:
         self.view = FanoutView()
         self.board = board
         self.reference = None
+        self.skip = None
         self.tracks = []
         self.vias = []
         self.packages = get_packages()
@@ -28,6 +29,7 @@ class Controller:
         self.view.choiceAlignment.Bind( wx.EVT_CHOICE, self.OnChoiceAlignment)
         self.view.choiceDirection.Bind( wx.EVT_CHOICE, self.OnChoiceDirection)
         self.view.editFiltter.Bind(wx.EVT_TEXT, self.OnFiltterChange)
+        self.view.Bind(wx.EVT_CLOSE, self.OnClose)  #解决进程驻留问题
         
         self.add_references()
         self.get_tracks_vias()
@@ -38,7 +40,9 @@ class Controller:
     
     def Close(self):
         self.view.Destroy()
-
+    def OnClose(self,event):    #解决进程驻留问题
+        self.view.Destroy()
+        event.Skip()
     def OnButtonFanout(self, event):
         reference = self.view.GetReferenceSelected()
         if reference == '':
@@ -57,6 +61,8 @@ class Controller:
         else:
             self.logger.error('Please add via')
             return
+        skip_index = self.view.GetSkipIndex()
+        unused_pads = self.view.GetCheckUnusepad()
         package = self.view.GetPackageValue()
         self.logger.info('package: %s' %package)
         alignment = self.view.GetAlignmentValue()
@@ -66,7 +72,7 @@ class Controller:
         else:
             direction = self.view.GetDirectionValue()
         self.logger.info('direction: %s' %direction)
-        self.model.update_data(reference, self.tracks[track_index], self.vias[via_index])
+        self.model.update_data(reference,skip_index, self.tracks[track_index], self.vias[via_index],unused_pads)
         self.model.update_package(package, alignment, direction)
         self.model.fanout()
 
@@ -137,17 +143,19 @@ class Controller:
 
     def add_references(self):
         self.view.AddReferences(self.model.references)
+        if self.model.indexSelected is not None:
+            self.view.SetIndexReferences(self.model.indexSelected)
 
     def get_tracks_vias(self):
         units = pcbnew.GetUserUnits()
         unit = ''
         scale = 1
         # pcbnew.EDA_UNITS_INCHES = 0
-        if units == pcbnew.EDA_UNITS_INCHES:
+        if units == pcbnew.EDA_UNITS_INCH:
             unit = 'in'
             scale = 25400000
         # pcbnew.EDA_UNITS_MILLIMETRES = 1
-        elif units == pcbnew.EDA_UNITS_MILLIMETRES:
+        elif units == pcbnew.EDA_UNITS_MM:
             unit = 'mm'
             scale = 1000000
         # pcbnew.EDA_UNITS_MILS = 5
